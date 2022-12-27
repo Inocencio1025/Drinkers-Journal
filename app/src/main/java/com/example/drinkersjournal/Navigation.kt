@@ -23,78 +23,24 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.MainScreen.route){
-        composable(route = Screen.MainScreen.route){
-            MainScreen(navController = navController)
-        }
-        composable(route = Screen.ViewListScreen.route){
+    NavHost(navController = navController, startDestination = Screen.HomeScreen.route){
 
+        // Home Screen
+        composable(route = Screen.HomeScreen.route){
+            HomeScreen(navController = navController)
+        }
+
+        // View list of tried drinks
+        composable(route = Screen.ViewListScreen.route){
            ViewListScreen()
         }
+
+        // View a drink at random
+        composable(route = Screen.RandomDrinkScreen.route){
+            RandomDrinkScreen()
+        }
+
+
     }
 }
 
-@Composable
-fun MainScreen(navController: NavController){
-    
-
-
-    // renders background image
-    Image(painter = painterResource(id = R.drawable.ic_temporary_home_background),
-        contentDescription = null,
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.FillBounds
-    )
-
-
-    Column() {
-
-        // renders name of app on top of home screen
-        Image(
-            painter = painterResource(id = R.drawable.ic_title),
-            contentDescription = "Title Line 1",
-            modifier = Modifier
-                .fillMaxHeight(.4f)
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
-
-        Spacer(modifier = Modifier.fillMaxHeight(.1f))
-
-        // All buttons on home screen
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(text = "Try Random Drink")
-        }
-
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(text = "Browse Drinks")
-        }
-
-        Button(
-            onClick = {navController.navigate(Screen.ViewListScreen.route)},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(text = "Your Drinker's List")
-        }
-    }
-}
-
-@Composable
-fun ViewListScreen(){
-    Text(text = "Fuck you")
-}
