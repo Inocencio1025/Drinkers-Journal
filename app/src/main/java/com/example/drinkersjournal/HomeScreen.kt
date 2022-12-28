@@ -17,6 +17,7 @@ fun HomeScreen(navController: NavController){
 
 
 
+
     // renders background image
     Image(painter = painterResource(id = R.drawable.ic_temporary_home_background),
         contentDescription = null,
