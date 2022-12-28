@@ -1,31 +1,36 @@
 package com.example.drinkersjournal
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import okio.IOException
 import retrofit2.HttpException
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import java.io.InputStream
+import java.net.URL
+
 
 const val TAG = "RandomDrinkScreen"
 val text = mutableStateOf("No Drink Name")
+val imageUrlStr = mutableStateOf("")
 
 
+
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun RandomDrinkScreen () {
 
@@ -53,6 +58,8 @@ fun RandomDrinkScreen () {
 
 
     LaunchedEffect(true) {
+        val painter: Painter
+
         val response = try {
             RetrofitInstance.api.getRandomCocktail()
         } catch (e: IOException) {
@@ -67,19 +74,32 @@ fun RandomDrinkScreen () {
 
         if (response.isSuccessful && response.body() != null) {
 
-            //text = response.body()!!.drinks[0].strDrink
-            //update viewmodel
+
             text.value = response.body()!!.drinks[0].strDrink
+            imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb
+
+
+
+
+
         }
 
     }
 
     Text(text = text.value)
-    //get text from viewmodel
+    
+    GlideImage(
+        model = imageUrlStr.value,
+        contentDescription = "Picture of Random Drink",
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 50.dp))
+
+
+
+
+
 }
-
-
-
 
 
 
