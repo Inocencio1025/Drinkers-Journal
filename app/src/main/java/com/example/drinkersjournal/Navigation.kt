@@ -27,7 +27,7 @@ fun Navigation() {
 
         // Home Screen
         composable(route = Screen.HomeScreen.route){
-            HomeScreen(navController = navController)
+            HomeScreen(navController)
         }
 
         // View list of tried drinks
