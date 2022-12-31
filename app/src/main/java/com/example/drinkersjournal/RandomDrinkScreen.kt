@@ -40,25 +40,11 @@ var measurements: MutableList<String> by mutableStateOf(mutableListOf())
 @Composable
 fun RandomDrinkScreen () {
 
-
-
-
-
-    // renders background image
-    setBackgroundImage()
-
     // gets content, which then recomposes on screen
     retrieveRandomDrink()
 
     // sets up content to display
     setContent()
-
-
-
-
-
-
-
 
 }
 
@@ -149,33 +135,36 @@ fun setContent() {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-
         // Start of content to display
 
         // drink image
         GlideImage(
             model = imageUrlStr.value,
             contentDescription = "Picture of Random Drink",
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(1f)
         )
-
-
-
 
         // drink name
         CreateNameText(nameStr = drinkName.value)
 
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // button for displaying the next drink
         Button(onClick = { retrieveRandomDrink() }) {
             Text(text = "Try Another")
         }
 
+        val i = 0
         // display ingredients text
         ingredients.forEach() {
-            CreateIngredientText(it)
+            CreateIngredientText(measurements[i] + " " + it)
         }
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Text(text = "Directions:",
+            color = Color.Red,
+            fontSize = 20.sp)
 
         // display instructions
         CreateInstructionText(instrStr = instructions.value)
@@ -183,11 +172,6 @@ fun setContent() {
 
     }
 }
-
-
-
-
-
 
 
 // Ingredient text
@@ -200,7 +184,7 @@ fun CreateIngredientText(ingStr: String) {
         fontSize = 20.sp,
         modifier = Modifier
             .layoutId("ingredients")
-            .padding(8.dp))
+            .padding(4.dp))
 
 }
 
@@ -234,13 +218,11 @@ fun CreateInstructionText(instrStr: String){
         text = instrStr,
         color = Color.White,
         fontSize = 24.sp,
-        modifier = Modifier.padding(vertical = 36.dp, horizontal = 20.dp ))
+        modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp ))
 }
 
 
 fun retrieveRandomDrink(){
-
-
 
     CoroutineScope(Dispatchers.Main).launch {
 
@@ -262,15 +244,11 @@ fun retrieveRandomDrink(){
 
         }
 
-
-
-
         //collects ingredients into private list in class
         gatherIngredients(response)
         gatherMeasurements(response)
 
         instructions.value = response.body()!!.drinks[0].strInstructions
-
 
     }
 }
