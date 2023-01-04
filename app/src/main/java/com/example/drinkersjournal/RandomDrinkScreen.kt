@@ -165,15 +165,15 @@ fun retrieveRandomDrink(){
         if (response.isSuccessful && response.body() != null) {
 
             //collect name and pic
-            drinkName.value = response.body()!!.drinks[0].strDrink
-            imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb
+            drinkName.value = response.body()!!.drinks[0].strDrink.toString()
+            imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
 
             //collects ingredients
             gatherIngredients(response)
             gatherMeasurements(response)
 
             //collect instructions
-            instructions.value = response.body()!!.drinks[0].strInstructions
+            instructions.value = response.body()!!.drinks[0].strInstructions.toString()
 
         }
 
@@ -187,35 +187,35 @@ fun gatherIngredients(response: Response<Drinks>){
     ingredients.clear()
 
     if(response.body()!!.drinks[0].strIngredient1 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient1)
+        ingredients.add(response.body()!!.drinks[0].strIngredient1.toString())
     if(response.body()!!.drinks[0].strIngredient2 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient2)
+        ingredients.add(response.body()!!.drinks[0].strIngredient2.toString())
     if(response.body()!!.drinks[0].strIngredient3 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient3)
+        ingredients.add(response.body()!!.drinks[0].strIngredient3.toString())
     if(response.body()!!.drinks[0].strIngredient4 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient4)
+        ingredients.add(response.body()!!.drinks[0].strIngredient4.toString())
     if(response.body()!!.drinks[0].strIngredient5 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient5)
+        ingredients.add(response.body()!!.drinks[0].strIngredient5.toString())
     if(response.body()!!.drinks[0].strIngredient6 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient6)
+        ingredients.add(response.body()!!.drinks[0].strIngredient6.toString())
     if(response.body()!!.drinks[0].strIngredient7 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient7)
+        ingredients.add(response.body()!!.drinks[0].strIngredient7.toString())
     if(response.body()!!.drinks[0].strIngredient8 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient8)
+        ingredients.add(response.body()!!.drinks[0].strIngredient8.toString())
     if(response.body()!!.drinks[0].strIngredient9 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient9)
+        ingredients.add(response.body()!!.drinks[0].strIngredient9.toString())
     if(response.body()!!.drinks[0].strIngredient10 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient10)
+        ingredients.add(response.body()!!.drinks[0].strIngredient10.toString())
     if(response.body()!!.drinks[0].strIngredient11 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient11)
+        ingredients.add(response.body()!!.drinks[0].strIngredient11.toString())
     if(response.body()!!.drinks[0].strIngredient12 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient12)
+        ingredients.add(response.body()!!.drinks[0].strIngredient12.toString())
     if(response.body()!!.drinks[0].strIngredient13 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient13)
+        ingredients.add(response.body()!!.drinks[0].strIngredient13.toString())
     if(response.body()!!.drinks[0].strIngredient14 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient14)
+        ingredients.add(response.body()!!.drinks[0].strIngredient14.toString())
     if(response.body()!!.drinks[0].strIngredient15 != null)
-        ingredients.add(response.body()!!.drinks[0].strIngredient15)
+        ingredients.add(response.body()!!.drinks[0].strIngredient15.toString())
 }
 
 fun gatherMeasurements(response: Response<Drinks>) {
@@ -223,35 +223,35 @@ fun gatherMeasurements(response: Response<Drinks>) {
 
 
     if(response.body()!!.drinks[0].strMeasure1 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure1)
+        measurements.add(response.body()!!.drinks[0].strMeasure1.toString())
     if(response.body()!!.drinks[0].strMeasure2 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure2)
+        measurements.add(response.body()!!.drinks[0].strMeasure2.toString())
     if(response.body()!!.drinks[0].strMeasure3 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure3)
+        measurements.add(response.body()!!.drinks[0].strMeasure3.toString())
     if(response.body()!!.drinks[0].strMeasure4 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure4)
+        measurements.add(response.body()!!.drinks[0].strMeasure4.toString())
     if(response.body()!!.drinks[0].strMeasure5 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure5)
+        measurements.add(response.body()!!.drinks[0].strMeasure5.toString())
     if(response.body()!!.drinks[0].strMeasure6 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure6)
+        measurements.add(response.body()!!.drinks[0].strMeasure6.toString())
     if(response.body()!!.drinks[0].strMeasure7 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure7)
+        measurements.add(response.body()!!.drinks[0].strMeasure7.toString())
     if(response.body()!!.drinks[0].strMeasure8 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure8)
+        measurements.add(response.body()!!.drinks[0].strMeasure8.toString())
     if(response.body()!!.drinks[0].strMeasure9 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure9)
+        measurements.add(response.body()!!.drinks[0].strMeasure9.toString())
     if(response.body()!!.drinks[0].strMeasure10 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure10)
+        measurements.add(response.body()!!.drinks[0].strMeasure10.toString())
     if(response.body()!!.drinks[0].strMeasure11 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure11)
+        measurements.add(response.body()!!.drinks[0].strMeasure11.toString())
     if(response.body()!!.drinks[0].strMeasure12 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure12)
+        measurements.add(response.body()!!.drinks[0].strMeasure12.toString())
     if(response.body()!!.drinks[0].strMeasure13 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure13)
+        measurements.add(response.body()!!.drinks[0].strMeasure13.toString())
     if(response.body()!!.drinks[0].strMeasure14 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure14)
+        measurements.add(response.body()!!.drinks[0].strMeasure14.toString())
     if(response.body()!!.drinks[0].strMeasure15 != null)
-        measurements.add(response.body()!!.drinks[0].strMeasure15)
+        measurements.add(response.body()!!.drinks[0].strMeasure15.toString())
 }
 
 

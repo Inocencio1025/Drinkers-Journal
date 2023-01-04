@@ -9,11 +9,11 @@ import retrofit2.http.Query
 interface CocktailAPI {
 
     // Retrieves a random drink
-    @GET("/api/json/v1/1/random.php")
+    @GET("random.php")
     suspend fun getRandomCocktail(): Response<Drinks>
 
-    @GET("/api/json/v1/1/lookup.php?i={drinkID}")
-    suspend fun getCocktailById(@Path("drinkID") drinkID: Int): Response<Drinks>
+    @GET("lookup.php")
+    suspend fun getCocktailById(@Query("i") drinkID: Int): Response<Drinks>
 
 
 
