@@ -13,7 +13,7 @@ interface CocktailAPI {
     suspend fun getRandomCocktail(): Response<Drinks>
 
     @GET("lookup.php")
-    suspend fun getCocktailById(@Query("i") drinkID: Int): Response<Drinks>
+    suspend fun getCocktailById(@Query("i") drinkID: String): Response<Drinks>
 
 
 

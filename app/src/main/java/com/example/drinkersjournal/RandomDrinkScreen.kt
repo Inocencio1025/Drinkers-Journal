@@ -1,6 +1,7 @@
 package com.example.drinkersjournal
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,12 +29,12 @@ import retrofit2.Response
 
 
 
-var imageUrlStr = mutableStateOf("Fetching drink...")
+var imageUrlStr = mutableStateOf("")
+var drinkId = mutableStateOf("")
 var drinkName = mutableStateOf("")
 var instructions = mutableStateOf("")
 var ingredients: MutableList<String> by mutableStateOf(mutableListOf())
 var measurements: MutableList<String> by mutableStateOf(mutableListOf())
-
 
 
 
@@ -50,6 +52,9 @@ fun RandomDrinkScreen () {
 @OptIn(ExperimentalGlideComposeApi::class) //for glideImage
 @Composable
 fun SetContent() {
+
+
+    var context = LocalContext.current
 
     // renders background image
     SetBackgroundImage()
@@ -82,10 +87,25 @@ fun SetContent() {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // next drink button
-        Button(onClick = { retrieveRandomDrink() }) {
-            Text(text = "Try Another")
+        Row() {
+            // random drink button
+            Button(onClick = { retrieveRandomDrink() }) {
+                Text(text = "Randomize Drink")
+            }
+
+            Button(
+                onClick = {
+                    addDrinkById(id = drinkId.value)
+                    val toast = Toast.makeText(context, "Added to list", Toast.LENGTH_SHORT)
+                    toast.show()
+                }
+
+            ) {
+                Text(text = "Add To List")
+
+            }
         }
+
 
         var i = 0
         // display ingredients text
@@ -164,7 +184,8 @@ fun retrieveRandomDrink(){
 
         if (response.isSuccessful && response.body() != null) {
 
-            //collect name and pic
+            //collects id, name and pic
+            drinkId.value = response.body()!!.drinks[0].idDrink.toString()
             drinkName.value = response.body()!!.drinks[0].strDrink.toString()
             imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
 
