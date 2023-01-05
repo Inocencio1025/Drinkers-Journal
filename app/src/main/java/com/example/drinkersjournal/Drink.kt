@@ -57,7 +57,8 @@ data class Drink(
     val strImageAttribution: String?,
     val strCreativeCommonsConfirmed: String?,
     val dateModified: String?,
-    val rating: Int?
+    val rating: Int?,
+    val ratingText: String?
 
 ) {
 

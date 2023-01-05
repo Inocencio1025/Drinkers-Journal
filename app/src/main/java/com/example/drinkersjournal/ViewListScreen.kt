@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -42,7 +43,8 @@ fun ViewListScreen(){
 
 
     // for testing-------------------------------------------
-    var testDrinks = listOf<Int>(11007,
+    var testDrinks = listOf(
+        11007,
         11028,
         11011,
         11012,
@@ -52,7 +54,7 @@ fun ViewListScreen(){
         11009,
         11025,
         11022,
-        11008)
+        11008,)
     addTestDrinks(testDrinks)
 
 
@@ -79,6 +81,8 @@ fun DisplayDrinkList(){
                     .padding(horizontal = 5.dp, vertical = 5.dp)
                     .fillMaxWidth()
                     .height(100.dp)
+
+
             ) {
                 GlideImage(
                     model = drink.strDrinkThumb.toString(),
@@ -87,23 +91,40 @@ fun DisplayDrinkList(){
                         .fillMaxHeight(1f)
                 )
 
-                Text(text = drink.strDrink.toString(),
-                    color = Color.White,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(.8f)
-                        .padding(vertical = 24.dp)
-                        .background(color = Color.Red)
+                        .fillMaxWidth(.85f)
+                        .padding(top = 5.dp, bottom = 5.dp, start = 5.dp, end = 5.dp)
+                        //.background(Color.Green)
+                ) {
+                    Text(text = drink.strDrink.toString(),
+                        textAlign = TextAlign.Left,
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            //.background(color = Color.Red)
+                    )
+                    Text(text = drink.ratingText.toString(),
+                        textAlign = TextAlign.Left,
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Light,
+                        modifier = Modifier
+                            //.background(color = Color.Green)
+                            .padding(horizontal = 10.dp)
+                            .fillMaxSize()
+                    )
 
-                )
+                }
+
 
                 Text(text = drink.rating.toString(),
+                    textAlign = TextAlign.Justify,
                     color = Color.White,
-                    fontSize = 50.sp,
+                    fontSize = 40.sp,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = Color.Green))
+                        .fillMaxWidth())
 
             }
 
@@ -193,7 +214,8 @@ fun addTestDrinks(id: List<Int>) {
                     response.body()!!.drinks[0].strImageAttribution,
                     response.body()!!.drinks[0].strCreativeCommonsConfirmed,
                     response.body()!!.drinks[0].dateModified,
-                    Random.nextInt(0,10)
+                    Random.nextInt(0,10),
+                    "Tastes like ass Tast e as Tass like a Ta like s Tastes like ass Tastes like ass Tastes like ass Tastes like ass Tastes like assTa stes like ass"
                 )
 
                 drinkersList.add(drink)
@@ -208,13 +230,8 @@ fun addTestDrinks(id: List<Int>) {
 
     }
 
-    @Composable
-    fun SetBackgroundImage(){
-        Image(
-            painter = painterResource(id = R.drawable.ic_temporary_home_background),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
-        )
-    }
+
 }
+
+
+
