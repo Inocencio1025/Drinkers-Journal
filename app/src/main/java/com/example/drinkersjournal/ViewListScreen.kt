@@ -3,55 +3,43 @@ package com.example.drinkersjournal
 
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okio.IOException
-import retrofit2.HttpException
-import kotlin.random.Random
 
 
 
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ViewListScreen(){
+fun ViewListScreen(navController: NavController){
 
     SetBackgroundImage()
 
-
-
-    DisplayDrinkList()
-
-
+    DisplayDrinkList(navController)
 
 
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun DisplayDrinkList(){
+fun DisplayDrinkList(navController: NavController){
+
+
 
 
     LazyColumn() {
@@ -62,7 +50,11 @@ fun DisplayDrinkList(){
                     .padding(horizontal = 5.dp, vertical = 5.dp)
                     .fillMaxWidth()
                     .height(100.dp)
-
+                    .clickable {
+                        DrinkersList.currentlyViewedDrink = drink.idDrink.toString()
+                        navController.navigate(Screen.DrinkDetailsScreen.route)
+                        //Log.d(TAG, drink.strDrink.toString() + " has been clicked")
+                    },
 
             ) {
                 GlideImage(
@@ -117,6 +109,7 @@ fun DisplayDrinkList(){
 
         }
     }
+
 
 
 }

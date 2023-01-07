@@ -2,23 +2,23 @@ package com.example.drinkersjournal
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.layoutId
+import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
 import retrofit2.Response
-
 
 
 private var imageUrlStr = mutableStateOf("")
@@ -40,10 +39,10 @@ private var measurements: MutableList<String> by mutableStateOf(mutableListOf())
 
 
 @Composable
-fun RandomDrinkScreen () {
+fun DrinkDetailsScreen () {
 
     // Calls to api and gathers the data to display
-    retrieveRandomDrink()
+    retrieveDrink()
 
     // sets up content to display
     SetContent()
@@ -128,31 +127,7 @@ private fun CreateDrinkImage() {
 
 @Composable
 private fun CreateButtons() {
-    var context = LocalContext.current
-    Row() {
-        // random drink button
-        Button(
-            onClick = { retrieveRandomDrink()},
-            modifier = Modifier.padding(horizontal = 5.dp)) {
 
-            Text(text = "Randomize Drink")
-        }
-
-        // add button
-        Button(
-            onClick = {
-                DrinkersList.addDrinkById(id = drinkId.value)
-
-                if(!DrinkersList.drinkListIds.contains(drinkId.value))
-                    Toast.makeText(context, "Added to list", Toast.LENGTH_SHORT).show()
-
-            }
-
-        ) {
-            Text(text = "Add To List")
-
-        }
-    }
 }
 
 
@@ -192,12 +167,14 @@ private fun CreateInstructionText(instrStr: String){
 }
 
 
-private fun retrieveRandomDrink(){
+private fun retrieveDrink(){
+
+
 
     CoroutineScope(Dispatchers.Main).launch {
 
         val response = try {
-            RetrofitInstance.api.getRandomCocktail()
+            RetrofitInstance.api.getCocktailById(DrinkersList.currentlyViewedDrink)
         } catch (e: IOException) {
             Log.e(TAG, "IOException, you might not have internet connection")
             return@launch
@@ -301,86 +278,4 @@ private fun gatherMeasurements(response: Response<Drinks>) {
 
 
 
-
-
-
-
-
-
-/*   Attempts to learn constrain layout
-
-
-
-
-val constraints = ConstraintSet() {
-    val drinkImage = createRefFor("drinkImage")
-    val drinkName = createRefFor("drinkName")
-    val measurements = createRefFor("measurements")
-    val ingredients = createRefFor("ingredients")
-    val instructions = createRefFor("instructions")
-
-    constrain(drinkImage) {
-        top.linkTo(parent.top)
-        width = Dimension.fillToConstraints
-        height = Dimension.fillToConstraints
-    }
-    constrain(drinkName) {
-        top.linkTo(drinkImage.bottom)
-    }
-    constrain(measurements) {
-        top.linkTo(drinkName.bottom)
-        start.linkTo(parent.start)
-    }
-    constrain(ingredients) {
-        top.linkTo(drinkName.bottom)
-        end.linkTo(parent.end)
-
-    }
-    constrain(instructions) {
-        top.linkTo(ingredients.bottom)
-    }
-}
-
-ConstraintLayout(constraints, modifier = Modifier
-    .fillMaxSize()
-    .verticalScroll(rememberScrollState())
-) {
-
-    // constraint layout contents
-    GlideImage(
-        model = imageUrlStr.value,
-        contentDescription = "Picture of Random Drink",
-        modifier = Modifier
-            .fillMaxWidth()
-            .layoutId("drinkImage")
-    )
-
-    CreateNameText(nameStr = drinkName.value)
-
-
-    // display ingredients text
-    CreateMeasurementText(measureStr = "measurements[0]")
-    CreateIngredientText(ingStr = "ingredients[0]")
-
-
-
-    // display instructions
-    CreateInstructionText(instrStr = instructions.value)
-
-
-
-
-}
-
-
- */
-
-
-
-
-
-
-
-    
-  
 
