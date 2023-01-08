@@ -19,7 +19,6 @@ fun HomeScreen(navController: NavController){
 
     SetBackgroundImage()
 
-
     Column() {
 
         // renders name of app on top of home screen

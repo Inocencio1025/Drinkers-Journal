@@ -23,27 +23,14 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 
-
-
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ViewListScreen(navController: NavController){
 
     SetBackgroundImage()
 
-    DisplayDrinkList(navController)
-
-
-}
-
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun DisplayDrinkList(navController: NavController){
-
-
-
-
     LazyColumn() {
-        itemsIndexed(DrinkersList.drinkList){ index, drink ->
+        itemsIndexed(DrinkersInfo.drinkList){ index, drink ->
 
             Row(
                 modifier = Modifier
@@ -51,12 +38,15 @@ fun DisplayDrinkList(navController: NavController){
                     .fillMaxWidth()
                     .height(100.dp)
                     .clickable {
-                        DrinkersList.currentlyViewedDrink = drink.idDrink.toString()
+                        DrinkersInfo.currentlyViewedDrinkId = drink.idDrink.toString()
                         navController.navigate(Screen.DrinkDetailsScreen.route)
                         //Log.d(TAG, drink.strDrink.toString() + " has been clicked")
                     },
 
-            ) {
+                ) {
+
+
+                // drink image
                 GlideImage(
                     model = drink.strDrinkThumb.toString(),
                     contentDescription = "Drink image",
@@ -68,16 +58,22 @@ fun DisplayDrinkList(navController: NavController){
                     modifier = Modifier
                         .fillMaxWidth(.85f)
                         .padding(top = 5.dp, bottom = 5.dp, start = 5.dp, end = 5.dp)
-                        //.background(Color.Green)
+                    //.background(Color.Green)
                 ) {
+
+
+                    // drink name
                     Text(text = drink.strDrink.toString(),
                         textAlign = TextAlign.Left,
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            //.background(color = Color.Red)
+                        //.background(color = Color.Red)
                     )
+
+
+                    // drink rating text
                     Text(text = drink.ratingText.toString(),
                         textAlign = TextAlign.Left,
                         color = Color.White,
@@ -88,31 +84,20 @@ fun DisplayDrinkList(navController: NavController){
                             .padding(horizontal = 10.dp)
                             .fillMaxSize()
                     )
-
                 }
 
 
+                // drink rating
                 Text(text = drink.rating.toString(),
                     textAlign = TextAlign.Justify,
                     color = Color.White,
                     fontSize = 40.sp,
                     modifier = Modifier
-                        .fillMaxWidth())
-
+                        .fillMaxWidth()
+                )
             }
-
-
-
-
-
-
-
         }
     }
-
-
-
 }
-
 
 

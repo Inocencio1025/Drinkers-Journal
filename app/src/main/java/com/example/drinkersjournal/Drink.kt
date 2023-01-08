@@ -60,6 +60,4 @@ data class Drink(
     val rating: Int?,
     val ratingText: String?
 
-) {
-
-}
+)

@@ -5,7 +5,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
 
-
     // lazy means instantiated when accessing api
     val api: CocktailAPI by lazy {
         Retrofit.Builder()
