@@ -65,7 +65,8 @@ private fun SetContent() {
         CreateNameText(nameStr = DrinkersInfo.drinkName.value)
 
         // display user thoughts and rating if any
-
+        CreateRatingText()
+        CreateRating()
 
         // the unique buttons for this screen
         CreateButtons()

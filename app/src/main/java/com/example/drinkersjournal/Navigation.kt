@@ -45,6 +45,11 @@ fun Navigation() {
             DrinkDetailsScreen()
         }
 
+        // Browse Drinks Screen
+        composable(route = Screen.BrowseDrinksScreen.route){
+            BrowseDrinksScreen()
+        }
+
 
     }
 }

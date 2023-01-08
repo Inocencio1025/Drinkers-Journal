@@ -64,7 +64,8 @@ private fun SetContent() {
         CreateNameText(nameStr = DrinkersInfo.drinkName.value)
 
         // display user thoughts and rating if any
-
+        CreateRatingText()
+        CreateRating()
 
         // the Buttons
         CreateButtons()
@@ -84,6 +85,10 @@ private fun SetContent() {
         CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
     }
 }
+
+
+
+
 
 
 // ------------------Composables for drink display----------------------------------------------//
@@ -110,6 +115,50 @@ fun CreateNameText(nameStr: String){
         modifier = Modifier.layoutId("drinkName")
     )
     Spacer(modifier = Modifier.height(20.dp))
+}
+
+@Composable
+fun CreateRatingText() {
+    var textHolder = ""
+
+    DrinkersInfo.drinkList.forEach {
+        if (DrinkersInfo.currentlyViewedDrinkId == it.idDrink.toString()) {
+            textHolder =it.ratingText.toString()
+        }
+    }
+
+    if (textHolder != "" && textHolder != "null") {
+
+        Text(
+            text = DrinkersInfo.ratingText.value,
+            color = Color.Green,
+            fontSize = 24.sp
+        )
+        DrinkersInfo.ratingText.value = "\"" + textHolder + "\""
+    }
+}
+
+@Composable
+fun CreateRating() {
+    DrinkersInfo.drinkList.forEach {
+        if (DrinkersInfo.currentlyViewedDrinkId == it.idDrink.toString()) {
+            if (it.rating != 0) {
+
+                Text(
+                    text = "Rating: ",
+                    color = Color.Yellow
+                )
+                Text(
+                    text = DrinkersInfo.rating.value,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+
+                DrinkersInfo.rating.value = it.rating.toString()
+                return
+            }
+        }
+    }
 }
 
 @Composable

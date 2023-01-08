@@ -16,6 +16,11 @@ import androidx.navigation.NavController
 
 @Composable
 fun HomeScreen(navController: NavController){
+    addTestDrink("17060", 0, "asss checkss" )
+    addTestDrink("17020", 0, "" )
+    addTestDrink("13395", 1, "woblles" )
+    addTestDrink("14688", 2, "" )
+    addTestDrink("12762", 9, "kkjhgh" )
 
     SetBackgroundImage()
 
@@ -45,7 +50,7 @@ fun HomeScreen(navController: NavController){
         }
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {navController.navigate(Screen.BrowseDrinksScreen.route)},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp)
@@ -65,6 +70,7 @@ fun HomeScreen(navController: NavController){
         }
     }
 }
+
 
 @Composable
 fun SetBackgroundImage(){
