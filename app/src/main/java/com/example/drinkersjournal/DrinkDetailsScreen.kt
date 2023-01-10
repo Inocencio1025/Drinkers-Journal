@@ -7,10 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +25,8 @@ import okio.IOException
 import retrofit2.HttpException
 import retrofit2.Response
 
+private var hasRating = false
+private var hasRatingText = false
 
 @Composable
 fun DrinkDetailsScreen () {
@@ -63,9 +62,10 @@ private fun SetContent() {
         // drink name
         CreateNameText(nameStr = DrinkersInfo.drinkName.value)
 
-        // display user thoughts and rating if any
-        CreateRatingText()
-        CreateRating()
+        // display user thoughts and rating if user has input any
+        CreateRatingText(DrinkersInfo.drinkList.find { it.idDrink == DrinkersInfo.currentlyViewedDrinkId }?.ratingText.toString())
+        CreateRating(DrinkersInfo.drinkList.find { it.idDrink == DrinkersInfo.currentlyViewedDrinkId }?.rating.toString())
+
 
         // the Buttons
         CreateButtons()
@@ -85,10 +85,6 @@ private fun SetContent() {
         CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
     }
 }
-
-
-
-
 
 
 // ------------------Composables for drink display----------------------------------------------//
@@ -118,52 +114,65 @@ fun CreateNameText(nameStr: String){
 }
 
 @Composable
-fun CreateRatingText() {
-    var textHolder = ""
-
-    DrinkersInfo.drinkList.forEach {
-        if (DrinkersInfo.currentlyViewedDrinkId == it.idDrink.toString()) {
-            textHolder =it.ratingText.toString()
-        }
-    }
-
-    if (textHolder != "" && textHolder != "null") {
-
-        Text(
-            text = DrinkersInfo.ratingText.value,
-            color = Color.Green,
-            fontSize = 24.sp
-        )
-        DrinkersInfo.ratingText.value = "\"" + textHolder + "\""
+fun CreateRateButton() {
+    Button(onClick = { }) {
+        if(hasRating || hasRatingText)
+            Text(text = "Edit Rating")
+        else
+            Text(text = "Add Rating")
     }
 }
 
 @Composable
-fun CreateRating() {
-    DrinkersInfo.drinkList.forEach {
-        if (DrinkersInfo.currentlyViewedDrinkId == it.idDrink.toString()) {
-            if (it.rating != 0) {
-
-                Text(
-                    text = "Rating: ",
-                    color = Color.Yellow
-                )
-                Text(
-                    text = DrinkersInfo.rating.value,
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                DrinkersInfo.rating.value = it.rating.toString()
-                return
-            }
-        }
+fun CreateRatingText(ratingText: String) {
+    if (ratingText == "" || ratingText == "null") {
+        hasRatingText = false
+        return
     }
+
+    DrinkersInfo.ratingText.value = "\"" + ratingText + "\""
+    Text(
+        text = DrinkersInfo.ratingText.value,
+        color = Color.Green,
+        fontSize = 24.sp
+    )
+    hasRatingText = true
+}
+
+@Composable
+fun CreateRating(rating: String) {
+    if (rating == "0") {
+        hasRating = false
+        return
+    }
+
+    DrinkersInfo.rating.value = rating
+    Text(
+        text = "Rating: ",
+        color = Color.Yellow
+    )
+    Text(
+        text = DrinkersInfo.rating.value,
+        color = Color.White
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+
+    hasRating = true
 }
 
 @Composable
 private fun CreateButtons() {
+    Row {
+        CreateDeleteButton()
+        CreateRateButton()
+    }
+}
 
+@Composable
+fun CreateDeleteButton() {
+    Button(onClick = { /*TODO*/ }) {
+        Text(text = "Remove From List")
+    }
 }
 
 @Composable
