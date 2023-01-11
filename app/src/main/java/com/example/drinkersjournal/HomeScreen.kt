@@ -12,16 +12,18 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 
-
+var testDrinksAdded = false
 
 @Composable
 fun HomeScreen(navController: NavController){
-    addTestDrink("17060", 0, "asss checkss" )
-    addTestDrink("17020", 0, "" )
-    addTestDrink("13395", 1, "woblles" )
-    addTestDrink("14688", 2, "" )
-    addTestDrink("12762", 9, "kkjhgh" )
-
+    if (!testDrinksAdded) {
+        DrinkersInfo.addTestDrink("17060", 0, "asss checkss")
+        DrinkersInfo.addTestDrink("17020", 0, "")
+        DrinkersInfo.addTestDrink("13395", 1, "woblles")
+        DrinkersInfo.addTestDrink("14688", 2, "")
+        DrinkersInfo.addTestDrink("12762", 9, "kkjhgh")
+        testDrinksAdded = true
+    }
     SetBackgroundImage()
 
     Column() {

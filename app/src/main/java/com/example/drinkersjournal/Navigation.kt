@@ -42,7 +42,7 @@ fun Navigation() {
 
         // View drink details
         composable(route = Screen.DrinkDetailsScreen.route){
-            DrinkDetailsScreen()
+            DrinkDetailsScreen(navController)
         }
 
         // Browse Drinks Screen

@@ -29,18 +29,18 @@ private var hasRating = false
 private var hasRatingText = false
 
 @Composable
-fun DrinkDetailsScreen () {
+fun DrinkDetailsScreen (navController: NavController) {
 
     // Searches drink with ID that is currently stored in DrinkersInfo
     // and stores retrieved info in DrinkersInfo
-    DrinkersInfo.retrieveDrink()
+    DrinkersInfo.retrieveDrinkInfo()
 
     // sets up content to display
-    SetContent()
+    SetContent(navController)
 }
 
 @Composable
-private fun SetContent() {
+private fun SetContent(navController: NavController) {
 
     // renders background image
     SetBackgroundImage()
@@ -68,7 +68,7 @@ private fun SetContent() {
 
 
         // the Buttons
-        CreateButtons()
+        CreateButtons(navController)
 
         // display ingredients text, with some conditionals
         var i = 0
@@ -113,15 +113,7 @@ fun CreateNameText(nameStr: String){
     Spacer(modifier = Modifier.height(20.dp))
 }
 
-@Composable
-fun CreateRateButton() {
-    Button(onClick = { }) {
-        if(hasRating || hasRatingText)
-            Text(text = "Edit Rating")
-        else
-            Text(text = "Add Rating")
-    }
-}
+
 
 @Composable
 fun CreateRatingText(ratingText: String) {
@@ -161,19 +153,39 @@ fun CreateRating(rating: String) {
 }
 
 @Composable
-private fun CreateButtons() {
+private fun CreateButtons(navController: NavController) {
     Row {
-        CreateDeleteButton()
-        CreateRateButton()
+
+            CreateDeleteButton(navController)
+            CreateRateButton()
+
     }
 }
 
 @Composable
-fun CreateDeleteButton() {
-    Button(onClick = { /*TODO*/ }) {
+fun CreateDeleteButton(navController: NavController) {
+    Button(
+        onClick = {
+            DrinkersInfo.deleteFromList()
+            navController.popBackStack()
+
+        }
+    )
+    {
         Text(text = "Remove From List")
     }
 }
+
+@Composable
+fun CreateRateButton() {
+    Button(onClick = { }) {
+        if(hasRating || hasRatingText)
+            Text(text = "Edit Rating")
+        else
+            Text(text = "Add Rating")
+    }
+}
+
 
 @Composable
 fun CreateIngredientText(ingStr: String) {

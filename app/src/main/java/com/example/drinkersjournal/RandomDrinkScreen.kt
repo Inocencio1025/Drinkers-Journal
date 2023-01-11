@@ -98,11 +98,12 @@ private fun CreateButtons() {
             Text(text = "Randomize Drink")
         }
         // add button
+
         Button(
             onClick = {
                 DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
 
-                if(!DrinkersInfo.drinkListIds.contains(DrinkersInfo.drinkId.value))
+                if(!DrinkersInfo.isInList(DrinkersInfo.drinkId.value))
                     Toast.makeText(context, "Added to list", Toast.LENGTH_SHORT).show()
             }
         ) {
