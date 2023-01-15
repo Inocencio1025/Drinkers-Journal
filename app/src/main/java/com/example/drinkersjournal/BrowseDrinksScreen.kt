@@ -1,7 +1,11 @@
 package com.example.drinkersjournal
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -14,28 +18,65 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
-fun BrowseDrinksScreen(){
+fun BrowseDrinksScreen(navController: NavController){
     SetBackgroundImage()
+    val ingredientList = mutableListOf<Ingredient>()
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(0.5f)
-            .padding(16.dp)
-    ){
-        CreateIngredientCard(
-            drinkName = "ass n tiddies",
-            imageUrl = "https://www.thecocktaildb.com/images/ingredients/vodka-Medium.png"
-        )
-    }
 
+    ingredientList.add(Ingredient("Vodka", "https://www.thecocktaildb.com/images/ingredients/vodka-Medium.png"))
+    ingredientList.add(Ingredient("Tequila", "https://www.thecocktaildb.com/images/ingredients/tequila-Medium.png"))
+    ingredientList.add(Ingredient("Rum", "https://www.thecocktaildb.com/images/ingredients/rum-Medium.png"))
+    ingredientList.add(Ingredient("Gin", "https://www.thecocktaildb.com/images/ingredients/gin-Medium.png"))
+    ingredientList.add(Ingredient("Whiskey", "https://www.thecocktaildb.com/images/ingredients/whiskey-Medium.png"))
+    ingredientList.add(Ingredient("Blended_Whiskey", "https://www.thecocktaildb.com/images/ingredients/Blended%20whiskey-Medium.png"))
+    ingredientList.add(Ingredient("Light_Rum", "https://www.thecocktaildb.com/images/ingredients/Light%20rum-Medium.png"))
+    ingredientList.add(Ingredient("Bourbon", "https://www.thecocktaildb.com/images/ingredients/bourbon-Medium.png"))
+    ingredientList.add(Ingredient("Brandy", "https://www.thecocktaildb.com/images/ingredients/brandy-Medium.png"))
+    ingredientList.add(Ingredient("Amaretto", "https://www.thecocktaildb.com/images/ingredients/amaretto-Medium.png"))
+    ingredientList.add(Ingredient("Malibu_Rum", "https://www.thecocktaildb.com/images/ingredients/Malibu%20rum-Medium.png"))
+    ingredientList.add(Ingredient("Dry_Vermouth", "https://www.thecocktaildb.com/images/ingredients/Dry%20vermouth-Medium.png"))
+    ingredientList.add(Ingredient("Triple_Sec", "https://www.thecocktaildb.com/images/ingredients/Triple%20sec-Medium.png"))
+    ingredientList.add(Ingredient("Coffee_Liqueur", "https://www.thecocktaildb.com/images/ingredients/Coffee%20liqueur-Medium.png"))
+    ingredientList.add(Ingredient("Club_Soda", "https://www.thecocktaildb.com/images/ingredients/Club%20soda-Medium.png"))
+    ingredientList.add(Ingredient("Grenadine", "https://www.thecocktaildb.com/images/ingredients/grenadine-Medium.png"))
+    ingredientList.add(Ingredient("Orange_Juice", "https://www.thecocktaildb.com/images/ingredients/Orange%20juice-Medium.png"))
+    ingredientList.add(Ingredient("Cranberry_Juice", "https://www.thecocktaildb.com/images/ingredients/Cranberry%20juice-Medium.png"))
+    ingredientList.add(Ingredient("Blue Curacao", "https://www.thecocktaildb.com/images/ingredients/Blue%20curacao-Medium.png"))
+
+
+    CreateIngredientList(ingredientList, navController)
 
 
 
 }
+
+@Composable
+fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController: NavController) {
+
+    LazyVerticalGrid(columns = GridCells.Fixed(2)){
+        itemsIndexed(ingredientList) { index, ingredient ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .padding(16.dp)
+                    .clickable {
+                        DrinkersInfo.ingredientForDrinkList = ingredient.name
+                        navController.navigate(Screen.DrinkListByIngredientScreen.route) }
+            ){
+                CreateIngredientCard(
+                    drinkName = ingredient.name,
+                    imageUrl = ingredient.imageUrl
+                )
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -47,7 +88,7 @@ fun CreateIngredientCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
-        elevation = 5.dp,
+        elevation = 5.dp
     ) {
         Box(
             modifier = Modifier.height(200.dp),

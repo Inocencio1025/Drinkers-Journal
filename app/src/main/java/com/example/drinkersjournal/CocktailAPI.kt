@@ -17,6 +17,12 @@ interface CocktailAPI {
     suspend fun getRandomCocktail(): Response<Drinks>
 
 
+    //
+    @GET("filter.php")
+    suspend fun getDrinksByIngredient(@Query("i") drinkID: String): Response<DrinksByIngredients>
+
+
+
 
 
 

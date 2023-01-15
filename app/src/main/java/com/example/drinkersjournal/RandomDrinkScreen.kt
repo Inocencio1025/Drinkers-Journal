@@ -89,15 +89,17 @@ private fun SetContent() {
 @Composable
 private fun CreateButtons() {
     var context = LocalContext.current
-    Row() {
+    Row {
         // random drink button
         Button(
             onClick = { DrinkersInfo.retrieveRandomDrink()},
-            modifier = Modifier.padding(horizontal = 5.dp)) {
-
+            modifier = Modifier.padding(horizontal = 5.dp)
+        ) {
             Text(text = "Randomize Drink")
         }
-        // add button
+
+        Spacer(modifier = Modifier.height(8.dp))
+
 
         Button(
             onClick = {

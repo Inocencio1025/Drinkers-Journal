@@ -8,11 +8,12 @@ import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
 import retrofit2.Response
-import kotlin.random.Random
 
 object DrinkersInfo {
+
+
     val drinkList = mutableListOf<Drink>()
-    //val drinkListIds = mutableListOf<String>()
+    val drinksByIngredient = mutableListOf<DrinkByIngredients>()
 
     var imageUrlStr = mutableStateOf("")
     var drinkId = mutableStateOf("")
@@ -25,10 +26,42 @@ object DrinkersInfo {
 
 
     var currentlyViewedDrinkId = ""
+    var ingredientForDrinkList = ""
 
 
 
 
+    fun retrieveDrinksByIngredient(ingredient: String){
+        CoroutineScope(Dispatchers.Main).launch {
+
+            val response = try {
+                RetrofitInstance.api.getDrinksByIngredient(ingredient)
+            } catch (e: IOException) {
+                Log.e(TAG, "IOException, you might not have internet connection")
+                return@launch
+            } catch (e: HttpException) {
+                Log.e(TAG, "HttpException, unexpected response")
+                return@launch
+            }
+
+            if (response.isSuccessful && response.body() != null) {
+
+                drinksByIngredient.clear()
+
+                response.body()!!.drinks.forEach(){
+                    val drinkByIngredients = DrinkByIngredients(
+                        it.idDrink,
+                        it.strDrink,
+                        it.strDrinkThumb
+                    )
+
+                    drinksByIngredient.add(drinkByIngredients)
+                }
+
+
+            }
+        }
+    }
 
     // uses id value stored in currentlyViewedId
     fun retrieveDrinkInfo(){

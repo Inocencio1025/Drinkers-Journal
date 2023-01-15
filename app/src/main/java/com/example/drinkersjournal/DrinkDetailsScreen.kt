@@ -133,7 +133,7 @@ fun CreateRatingText(ratingText: String) {
 
 @Composable
 fun CreateRating(rating: String) {
-    if (rating == "0") {
+    if (rating == "0" || rating == "null") {
         hasRating = false
         return
     }
@@ -156,35 +156,29 @@ fun CreateRating(rating: String) {
 private fun CreateButtons(navController: NavController) {
     Row {
 
-            CreateDeleteButton(navController)
-            CreateRateButton()
+        Button(
+            onClick = {
+                DrinkersInfo.deleteFromList()
+                navController.popBackStack()
 
-    }
-}
-
-@Composable
-fun CreateDeleteButton(navController: NavController) {
-    Button(
-        onClick = {
-            DrinkersInfo.deleteFromList()
-            navController.popBackStack()
-
+            }
+        )
+        {
+            Text(text = "Remove From List")
         }
-    )
-    {
-        Text(text = "Remove From List")
+
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Button(onClick = { }) {
+            if(hasRating || hasRatingText)
+                Text(text = "Edit Rating")
+            else
+                Text(text = "Add Rating")
+        }
     }
 }
 
-@Composable
-fun CreateRateButton() {
-    Button(onClick = { }) {
-        if(hasRating || hasRatingText)
-            Text(text = "Edit Rating")
-        else
-            Text(text = "Add Rating")
-    }
-}
 
 
 @Composable

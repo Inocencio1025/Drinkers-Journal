@@ -47,9 +47,13 @@ fun Navigation() {
 
         // Browse Drinks Screen
         composable(route = Screen.BrowseDrinksScreen.route){
-            BrowseDrinksScreen()
+            BrowseDrinksScreen(navController)
         }
 
+        //list of drinks by ingredient
+        composable(route = Screen.DrinkListByIngredientScreen.route){
+            DrinkListByIngredientScreen(navController)
+        }
 
     }
 }
