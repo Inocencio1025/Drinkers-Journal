@@ -8,7 +8,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.layoutId
+import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import kotlinx.coroutines.CoroutineScope
@@ -30,59 +36,89 @@ import retrofit2.Response
 
 
 @Composable
-fun RandomDrinkScreen () {
+fun RandomDrinkScreen (navController: NavController) {
 
     // Calls to api and gathers the data to display
     DrinkersInfo.retrieveRandomDrink()
 
     // sets up content to display
-    SetContent()
+    SetContent(navController)
 }
 
 // Create methods are in DrinkDetailsScreen
 @Composable
-private fun SetContent() {
-
-    // renders background image
-    SetBackgroundImage()
+private fun SetContent(navController: NavController) {
 
 
-    // start of content to display
-    Spacer(modifier = Modifier.height(20.dp))
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 5.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(
+                items = listOf(
+                    BottomNavItem(
+                        name = "Try Drink",
+                        route = "random_drink_screen",
+                        icon = Icons.Default.Refresh
+                    ),
+                    BottomNavItem(
+                        name = "Browse",
+                        route = "browse_drinks_screen",
+                        icon = Icons.Default.List
+                    ),
+                    BottomNavItem(
+                        name = "Favorites",
+                        route = "view_list_screen",
+                        icon = Icons.Default.Favorite
+                    )
+                ),
+                navController = navController,
+                onItemClick = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
     ) {
 
-        // drink image
-        CreateDrinkImage()
+        SetBackgroundImage()
+        // start of content to display
+        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 5.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        // drink name
-        CreateNameText(nameStr = DrinkersInfo.drinkName.value)
+            // drink image
+            CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
+
+            // drink name
+            CreateNameText(nameStr = DrinkersInfo.drinkName.value)
 
 
 
-        // the unique buttons for this screen
-        CreateButtons()
+            // the unique buttons for this screen
+            CreateButtons()
 
-        // display ingredients text, with some conditionals
-        var i = 0
-        DrinkersInfo.ingredients.forEach {
-            if (DrinkersInfo.measurements.getOrNull(i) != null)
-                CreateIngredientText(ingStr = DrinkersInfo.measurements[i] + " " + it)
-            else {
-                CreateIngredientText(ingStr = it)
+            // display ingredients text, with some conditionals
+            var i = 0
+            DrinkersInfo.ingredients.forEach {
+                if (DrinkersInfo.measurements.getOrNull(i) != null)
+                    CreateIngredientText(ingStr = DrinkersInfo.measurements[i] + " " + it)
+                else {
+                    CreateIngredientText(ingStr = it)
+                }
+                i++
             }
-            i++
-        }
 
-        // display instructions
-        CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
+            // display instructions
+            CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
+        }
     }
+
+
 }
 
 // buttons: randomize drink, save drink

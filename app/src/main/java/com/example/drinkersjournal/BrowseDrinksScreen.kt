@@ -8,7 +8,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +29,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
 fun BrowseDrinksScreen(navController: NavController){
-    SetBackgroundImage()
+
     val ingredientList = mutableListOf<Ingredient>()
 
 
@@ -58,23 +63,55 @@ fun BrowseDrinksScreen(navController: NavController){
 @Composable
 fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController: NavController) {
 
-    LazyVerticalGrid(columns = GridCells.Fixed(2)){
-        itemsIndexed(ingredientList) { index, ingredient ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(16.dp)
-                    .clickable {
-                        DrinkersInfo.ingredientForDrinkList = ingredient.name
-                        navController.navigate(Screen.DrinkListByIngredientScreen.route) }
-            ){
-                CreateIngredientCard(
-                    drinkName = ingredient.name,
-                    imageUrl = ingredient.imageUrl
-                )
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(
+                items = listOf(
+                    BottomNavItem(
+                        name = "Try Drink",
+                        route = "random_drink_screen",
+                        icon = Icons.Default.Refresh
+                    ),
+                    BottomNavItem(
+                        name = "Browse",
+                        route = "browse_drinks_screen",
+                        icon = Icons.Default.List
+                    ),
+                    BottomNavItem(
+                        name = "Favorites",
+                        route = "view_list_screen",
+                        icon = Icons.Default.Favorite
+                    )
+                ),
+                navController = navController,
+                onItemClick = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+    ) {
+        SetBackgroundImage()
+
+        LazyVerticalGrid(columns = GridCells.Fixed(2)){
+            itemsIndexed(ingredientList) { index, ingredient ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .padding(16.dp)
+                        .clickable {
+                            DrinkersInfo.ingredientForDrinkList = ingredient.name
+                            navController.navigate(Screen.DrinkListByIngredientScreen.route)
+                        }
+                ){
+                    CreateIngredientCard(
+                        drinkName = ingredient.name,
+                        imageUrl = ingredient.imageUrl
+                    )
+                }
             }
         }
     }
+
 }
 
 

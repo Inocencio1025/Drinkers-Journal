@@ -2,73 +2,124 @@ package com.example.drinkersjournal
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
-
-var testDrinksAdded = false
 
 @Composable
 fun HomeScreen(navController: NavController){
-    if (!testDrinksAdded) {
-        DrinkersInfo.addTestDrink("17060", 0, "asss checkss")
-        DrinkersInfo.addTestDrink("17020", 0, "")
-        DrinkersInfo.addTestDrink("13395", 1, "woblles")
-        DrinkersInfo.addTestDrink("14688", 2, "")
-        DrinkersInfo.addTestDrink("12762", 9, "kkjhgh")
-        testDrinksAdded = true
-    }
+
     SetBackgroundImage()
 
-    Column() {
+    // App Logo
+    CreateAppLogoImage(
+        Modifier
+            .fillMaxHeight(.4f)
+            .fillMaxWidth()
+            .padding(16.dp)
+    )
 
-        // renders name of app on top of home screen
-        Image(
-            painter = painterResource(id = R.drawable.ic_title),
-            contentDescription = "Title",
-            modifier = Modifier
-                .fillMaxHeight(.4f)
+    Spacer(modifier = Modifier.fillMaxHeight(.1f))
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        //All amin menu buttons
+        CreateMainMenuButton(label = "Try Random Drink", Screen.RandomDrinkScreen.route, navController,
+            Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .height(80.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         )
 
-        Spacer(modifier = Modifier.fillMaxHeight(.1f))
-
-        // All buttons on home screen
-        Button(
-            onClick = {navController.navigate(Screen.RandomDrinkScreen.route)},
-            modifier = Modifier
+        CreateMainMenuButton(label = "Browse Drinks", Screen.BrowseDrinksScreen.route, navController,
+            Modifier
                 .fillMaxWidth()
                 .height(80.dp)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(text = "Try Random Drink")
-        }
+        )
 
-        Button(
-            onClick = {navController.navigate(Screen.BrowseDrinksScreen.route)},
-            modifier = Modifier
+        CreateMainMenuButton(label = "Your Drinker's List", Screen.ViewListScreen.route, navController,
+            Modifier
                 .fillMaxWidth()
                 .height(80.dp)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(text = "Browse Drinks")
-        }
+        )
+    }
 
-        Button(
-            onClick = {navController.navigate(Screen.ViewListScreen.route)},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(text = "Your Drinker's List")
+
+
+}
+
+@Composable
+fun CreateAppLogoImage(modifier : Modifier){
+    Image(
+        painter = painterResource(id = R.drawable.ic_title),
+        contentDescription = "Title",
+        modifier = modifier
+    )
+}
+
+@Composable
+fun CreateMainMenuButton(label : String,route: String, navController: NavController, modifier : Modifier){
+    Button(
+        onClick = {navController.navigate(route)},
+        modifier = modifier
+    ) {
+        Text(
+            text = label,
+            fontSize = 24.sp
+        )
+    }
+}
+
+@Composable
+fun BottomNavigationBar(
+    items: List<BottomNavItem>,
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    onItemClick: (BottomNavItem) -> Unit
+){
+    val backStackEntry = navController.currentBackStackEntryAsState()
+    BottomNavigation(
+        modifier = modifier,
+        backgroundColor = Color.LightGray,
+        elevation = 5.dp
+    ) {
+        items.forEach{ item ->
+            val selected = item.route == backStackEntry.value?.destination?.route
+            BottomNavigationItem(
+                selected = selected,
+                onClick = { onItemClick(item) },
+                selectedContentColor = Color.Yellow,
+                unselectedContentColor = Color.Gray,
+                icon = {
+                    Column(horizontalAlignment = CenterHorizontally) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.name)
+                        if(selected){
+                            Text(
+                                text = item.name,
+                                textAlign = TextAlign.Center,
+                                fontSize = 10.sp)
+                        }
+                    }
+                }
+            )
         }
     }
 }
@@ -76,10 +127,15 @@ fun HomeScreen(navController: NavController){
 
 @Composable
 fun SetBackgroundImage(){
-    Image(
-        painter = painterResource(id = R.drawable.ic_temporary_home_background),
-        contentDescription = null,
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.FillBounds
-    )
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_temporary_home_background),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+    }
+
 }

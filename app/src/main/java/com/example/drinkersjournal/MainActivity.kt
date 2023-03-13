@@ -26,6 +26,13 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             Navigation()
+
+            //test drinks for favorites list
+            DrinkersInfo.addTestDrink("17060", 0, "asss checkss")
+            DrinkersInfo.addTestDrink("17020", 0, "")
+            DrinkersInfo.addTestDrink("13395", 1, "woblles")
+            DrinkersInfo.addTestDrink("14688", 2, "")
+            DrinkersInfo.addTestDrink("12762", 9, "kkjhgh")
         }
     }
 }

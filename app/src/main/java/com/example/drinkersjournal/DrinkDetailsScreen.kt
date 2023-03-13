@@ -1,6 +1,7 @@
 package com.example.drinkersjournal
 
 import android.util.Log
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -45,8 +46,9 @@ private fun SetContent(navController: NavController) {
     // renders background image
     SetBackgroundImage()
 
-
     Spacer(modifier = Modifier.height(20.dp))
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,7 +59,7 @@ private fun SetContent(navController: NavController) {
     ) {
 
         // drink image
-        CreateDrinkImage()
+        CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
 
         // drink name
         CreateNameText(nameStr = DrinkersInfo.drinkName.value)
@@ -92,14 +94,17 @@ private fun SetContent(navController: NavController) {
 
 @OptIn(ExperimentalGlideComposeApi::class) //for glideImage
 @Composable
-fun CreateDrinkImage() {
-    Spacer(modifier = Modifier.height(20.dp))
+fun CreateDrinkImage(img: String) {
 
-    GlideImage(
-        model = DrinkersInfo.imageUrlStr.value,
-        contentDescription = "Picture of Random Drink",
-        modifier = Modifier.fillMaxSize(1f)
-    )
+    Box(modifier = Modifier.padding(24.dp)){
+        GlideImage(
+            model = img,
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+
+
 }
 
 @Composable
@@ -160,7 +165,6 @@ private fun CreateButtons(navController: NavController) {
             onClick = {
                 DrinkersInfo.deleteFromList()
                 navController.popBackStack()
-
             }
         )
         {
@@ -170,7 +174,9 @@ private fun CreateButtons(navController: NavController) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Button(onClick = { }) {
+        Button(onClick = {
+
+        }) {
             if(hasRating || hasRatingText)
                 Text(text = "Edit Rating")
             else
