@@ -63,7 +63,9 @@ fun ViewListScreen(navController: NavController){
         SetBackgroundImage()
 
 
-        LazyColumn() {
+        LazyColumn(
+            modifier = Modifier.padding(bottom = 50.dp)
+        ) {
             itemsIndexed(DrinkersInfo.drinkList){ index, drink ->
 
                 Row(
@@ -131,10 +133,11 @@ fun ViewListScreen(navController: NavController){
                     )
                 }
             }
+
         }
 
-    }
 
+    }
 }
 
 

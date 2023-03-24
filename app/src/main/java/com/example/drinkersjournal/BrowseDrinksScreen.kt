@@ -58,6 +58,8 @@ fun BrowseDrinksScreen(navController: NavController){
 
 
 
+
+
 }
 
 @Composable
@@ -92,7 +94,10 @@ fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController:
     ) {
         SetBackgroundImage()
 
-        LazyVerticalGrid(columns = GridCells.Fixed(2)){
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.padding(bottom = 50.dp)
+        ) {
             itemsIndexed(ingredientList) { index, ingredient ->
                 Box(
                     modifier = Modifier
@@ -110,6 +115,7 @@ fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController:
                 }
             }
         }
+        CreateBottomSpace()
     }
 
 }

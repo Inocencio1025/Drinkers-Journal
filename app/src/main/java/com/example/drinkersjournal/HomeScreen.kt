@@ -3,10 +3,8 @@ package com.example.drinkersjournal
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,19 +22,23 @@ fun HomeScreen(navController: NavController){
 
     SetBackgroundImage()
 
-    // App Logo
-    CreateAppLogoImage(
-        Modifier
-            .fillMaxHeight(.4f)
-            .fillMaxWidth()
-            .padding(16.dp)
-    )
+
 
     Spacer(modifier = Modifier.fillMaxHeight(.1f))
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+
+        // App Logo
+        CreateAppLogoImage(
+            Modifier
+                .fillMaxHeight(.4f)
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+
+
         //All amin menu buttons
         CreateMainMenuButton(label = "Try Random Drink", Screen.RandomDrinkScreen.route, navController,
             Modifier

@@ -7,11 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
@@ -49,9 +48,42 @@ fun RandomDrinkScreen (navController: NavController) {
 @Composable
 private fun SetContent(navController: NavController) {
 
+    var context = LocalContext.current
+    var isInList by remember { mutableStateOf(false) }
+
+    isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
 
 
     Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
+
+                    if(!isInList) {
+                        Toast.makeText(context, "Added to list", Toast.LENGTH_SHORT).show()
+                    }
+                    isInList = !isInList
+
+
+                },
+                contentColor =  Color.White
+            ) {
+                if (!isInList) {
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "Add to Favorites"
+                    )
+                }
+                else {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Add to Favorites"
+                    )
+                }
+
+            }
+        },
         bottomBar = {
             BottomNavigationBar(
                 items = listOf(
@@ -77,6 +109,7 @@ private fun SetContent(navController: NavController) {
                 }
             )
         }
+
     ) {
 
         SetBackgroundImage()
@@ -115,16 +148,24 @@ private fun SetContent(navController: NavController) {
 
             // display instructions
             CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
+
+            CreateBottomSpace()
+
         }
     }
+}
 
+@Composable
+fun CreateBottomSpace(){
 
+    Spacer(modifier = Modifier.height(200.dp))
 }
 
 // buttons: randomize drink, save drink
 @Composable
 private fun CreateButtons() {
-    var context = LocalContext.current
+
+
     Row {
         // random drink button
         Button(
@@ -132,20 +173,6 @@ private fun CreateButtons() {
             modifier = Modifier.padding(horizontal = 5.dp)
         ) {
             Text(text = "Randomize Drink")
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-
-        Button(
-            onClick = {
-                DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
-
-                if(!DrinkersInfo.isInList(DrinkersInfo.drinkId.value))
-                    Toast.makeText(context, "Added to list", Toast.LENGTH_SHORT).show()
-            }
-        ) {
-            Text(text = "Add To List")
         }
     }
 }

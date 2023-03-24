@@ -82,6 +82,7 @@ object DrinkersInfo {
 
                 //collects id, name and pic
                 drinkId.value = response.body()!!.drinks[0].idDrink.toString()
+
                 drinkName.value = response.body()!!.drinks[0].strDrink.toString()
                 imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
 
