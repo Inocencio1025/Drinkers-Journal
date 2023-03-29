@@ -7,13 +7,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,6 +60,7 @@ fun BrowseDrinksScreen(navController: NavController){
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController: NavController) {
 
@@ -91,12 +90,13 @@ fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController:
                 }
             )
         }
-    ) {
-        SetBackgroundImage()
+    ) { innerPadding ->
 
+        SetBackgroundImage()
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(bottom = 50.dp)
+            modifier = Modifier.padding(paddingValues = innerPadding),
+
         ) {
             itemsIndexed(ingredientList) { index, ingredient ->
                 Box(
@@ -131,7 +131,6 @@ fun CreateIngredientCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
-        elevation = 5.dp
     ) {
         Box(
             modifier = Modifier.height(200.dp),
@@ -161,15 +160,14 @@ fun CreateIngredientCard(
 
             //name text
             Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
+                .fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
             ){
                 Text(
                     text = drinkName,
                     style = TextStyle(
                         color = Color.White,
-                        fontSize = 16.sp
+                        fontSize = 24.sp
                     )
                 )
             }

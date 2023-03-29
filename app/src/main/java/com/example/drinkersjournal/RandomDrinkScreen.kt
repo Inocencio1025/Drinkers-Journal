@@ -6,13 +6,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +49,7 @@ fun RandomDrinkScreen (navController: NavController) {
 }
 
 // Create methods are in DrinkDetailsScreen
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SetContent(navController: NavController) {
 
@@ -67,12 +72,13 @@ private fun SetContent(navController: NavController) {
 
 
                 },
-                contentColor =  Color.White
+                shape = CircleShape
             ) {
                 if (!isInList) {
                     Icon(
                         imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = "Add to Favorites"
+                        contentDescription = "Add to Favorites",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
                 else {
@@ -110,7 +116,7 @@ private fun SetContent(navController: NavController) {
             )
         }
 
-    ) {
+    ) { innerPadding ->
 
         SetBackgroundImage()
         // start of content to display
@@ -118,7 +124,7 @@ private fun SetContent(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 5.dp)
+                .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally

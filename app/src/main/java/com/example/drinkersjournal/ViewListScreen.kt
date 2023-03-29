@@ -8,12 +8,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +29,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ViewListScreen(navController: NavController){
 
@@ -58,13 +59,13 @@ fun ViewListScreen(navController: NavController){
                 }
             )
         }
-    ) {
+    ) { innerPadding ->
 
         SetBackgroundImage()
 
 
         LazyColumn(
-            modifier = Modifier.padding(bottom = 50.dp)
+            modifier = Modifier.padding(innerPadding)
         ) {
             itemsIndexed(DrinkersInfo.drinkList){ index, drink ->
 
