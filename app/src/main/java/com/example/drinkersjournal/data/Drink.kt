@@ -1,10 +1,13 @@
-package com.example.drinkersjournal
+package com.example.drinkersjournal.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity
 data class Drink(
-
-    val idDrink: String?,
+    @PrimaryKey
+    val idDrink: String,
     val strDrink: String?,
     val strDrinkAlternate: String?,
     val strTags: String?,
@@ -57,7 +60,7 @@ data class Drink(
     val strImageAttribution: String?,
     val strCreativeCommonsConfirmed: String?,
     val dateModified: String?,
+
     val rating: Int?,
     val ratingText: String?
-
 )

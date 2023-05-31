@@ -1,7 +1,7 @@
 package com.example.drinkersjournal
 
-import android.util.Log
 import androidx.compose.runtime.*
+import com.example.drinkersjournal.data.Drinks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,10 +37,10 @@ object DrinkersInfo {
             val response = try {
                 RetrofitInstance.api.getDrinksByIngredient(ingredient)
             } catch (e: IOException) {
-                Log.e(TAG, "IOException, you might not have internet connection")
+                //Log.e(TAG, "IOException, you might not have internet connection")
                 return@launch
             } catch (e: HttpException) {
-                Log.e(TAG, "HttpException, unexpected response")
+                //Log.e(TAG, "HttpException, unexpected response")
                 return@launch
             }
 
@@ -62,88 +62,18 @@ object DrinkersInfo {
             }
         }
     }
-
-    // uses id value stored in currentlyViewedId
-    fun retrieveDrinkInfo(){
-
-        CoroutineScope(Dispatchers.Main).launch {
-
-            val response = try {
-                RetrofitInstance.api.getCocktailById(currentlyViewedDrinkId)
-            } catch (e: IOException) {
-                Log.e(TAG, "IOException, you might not have internet connection")
-                return@launch
-            } catch (e: HttpException) {
-                Log.e(TAG, "HttpException, unexpected response")
-                return@launch
-            }
-
-            if (response.isSuccessful && response.body() != null) {
-
-                //collects id, name and pic
-                drinkId.value = response.body()!!.drinks[0].idDrink.toString()
-
-                drinkName.value = response.body()!!.drinks[0].strDrink.toString()
-                imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
-
-                //collects ingredients
-                gatherIngredients(response)
-                gatherMeasurements(response)
-
-                //collect instructions
-                instructions.value = response.body()!!.drinks[0].strInstructions.toString()
-
-
-            }
-        }
-    }
-
-
-    fun retrieveRandomDrink(){
-
-        CoroutineScope(Dispatchers.Main).launch {
-
-            val response = try {
-                RetrofitInstance.api.getRandomCocktail()
-            } catch (e: IOException) {
-                Log.e(TAG, "IOException, you might not have internet connection")
-                return@launch
-            } catch (e: HttpException) {
-                Log.e(TAG, "HttpException, unexpected response")
-                return@launch
-            }
-
-            if (response.isSuccessful && response.body() != null) {
-
-                //collects id, name and pic
-                drinkId.value = response.body()!!.drinks[0].idDrink.toString()
-                drinkName.value = response.body()!!.drinks[0].strDrink.toString()
-                imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
-
-                //collects ingredients
-                gatherIngredients(response)
-                gatherMeasurements(response)
-
-                //collect instructions
-                instructions.value = response.body()!!.drinks[0].strInstructions.toString()
-
-
-            }
-        }
-    }
-
     // adds drink to user list
-    fun addDrinkById(id: String){
+    suspend fun addDrinkById(id: String){
 
         CoroutineScope(Dispatchers.Main).launch {
 
             val response = try {
                 RetrofitInstance.api.getCocktailById(drinkID = id)
             } catch (e: IOException) {
-                Log.e(TAG, "IOException, you might not have internet connection")
+                //Log.e(TAG, "IOException, you might not have internet connection")
                 return@launch
             } catch (e: HttpException) {
-                Log.e(TAG, "HttpException, unexpected response")
+                //Log.e(TAG, "HttpException, unexpected response")
                 return@launch
             }
 
@@ -208,11 +138,82 @@ object DrinkersInfo {
 
 
 
-                if (!isInList(drink.idDrink.toString()))
-                    drinkList.add(drink)
+                if (!DrinkersInfo.isInList(drink.idDrink.toString()))
+                    DrinkersInfo.drinkList.add(drink)
             }
         }
     }
+
+    // uses id value stored in currentlyViewedId
+    fun retrieveDrinkInfo(){
+
+        CoroutineScope(Dispatchers.Main).launch {
+
+            val response = try {
+                RetrofitInstance.api.getCocktailById(currentlyViewedDrinkId)
+            } catch (e: IOException) {
+                //Log.e(TAG, "IOException, you might not have internet connection")
+                return@launch
+            } catch (e: HttpException) {
+                //Log.e(TAG, "HttpException, unexpected response")
+                return@launch
+            }
+
+            if (response.isSuccessful && response.body() != null) {
+
+                //collects id, name and pic
+                drinkId.value = response.body()!!.drinks[0].idDrink.toString()
+
+                drinkName.value = response.body()!!.drinks[0].strDrink.toString()
+                imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
+
+                //collects ingredients
+                gatherIngredients(response)
+                gatherMeasurements(response)
+
+                //collect instructions
+                instructions.value = response.body()!!.drinks[0].strInstructions.toString()
+
+
+            }
+        }
+    }
+
+
+    fun retrieveRandomDrink(){
+
+        CoroutineScope(Dispatchers.Main).launch {
+
+            val response = try {
+                RetrofitInstance.api.getRandomCocktail()
+            } catch (e: IOException) {
+                //Log.e(TAG, "IOException, you might not have internet connection")
+                return@launch
+            } catch (e: HttpException) {
+                //Log.e(TAG, "HttpException, unexpected response")
+                return@launch
+            }
+
+            if (response.isSuccessful && response.body() != null) {
+
+                //collects id, name and pic
+                drinkId.value = response.body()!!.drinks[0].idDrink.toString()
+                drinkName.value = response.body()!!.drinks[0].strDrink.toString()
+                imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
+
+                //collects ingredients
+                gatherIngredients(response)
+                gatherMeasurements(response)
+
+                //collect instructions
+                instructions.value = response.body()!!.drinks[0].strInstructions.toString()
+
+
+            }
+        }
+    }
+
+
 
 
     fun deleteFromList(){
@@ -310,10 +311,10 @@ object DrinkersInfo {
             val response = try {
                 RetrofitInstance.api.getCocktailById(drinkID = id)
             } catch (e: IOException) {
-                Log.e(TAG, "IOException, you might not have internet connection")
+                //Log.e(TAG, "IOException, you might not have internet connection")
                 return@launch
             } catch (e: HttpException) {
-                Log.e(TAG, "HttpException, unexpected response")
+                //Log.e(TAG, "HttpException, unexpected response")
                 return@launch
             }
 

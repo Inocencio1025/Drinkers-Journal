@@ -1,9 +1,11 @@
 package com.example.drinkersjournal
 
+import com.example.drinkersjournal.data.Drink
 
 
-import android.util.Log
-import androidx.compose.foundation.background
+
+
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,22 +18,22 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 
+
+
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ViewListScreen(navController: NavController){
+fun FavoriteDrinksScreen(navController: NavController){
 
     Scaffold(
         bottomBar = {
@@ -67,7 +69,7 @@ fun ViewListScreen(navController: NavController){
         LazyColumn(
             modifier = Modifier.padding(innerPadding)
         ) {
-            itemsIndexed(DrinkersInfo.drinkList){ index, drink ->
+            itemsIndexed(DrinkersInfo.drinkList){ index, drink:Drink ->
 
                 Row(
                     modifier = Modifier
