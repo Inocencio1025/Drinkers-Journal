@@ -1,20 +1,13 @@
 package com.example.drinkersjournal
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -22,14 +15,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.drinkersjournal.ui.theme.Pacifico
 
 
 @Composable
 fun HomeScreen(navController: NavController){
 
     SetBackgroundImage()
-
 
 
 
@@ -48,27 +39,26 @@ fun HomeScreen(navController: NavController){
         )
 
 
-        //All main menu buttons
+        //All amin menu buttons
         CreateMainMenuButton(label = "Try Random Drink", Screen.RandomDrinkScreen.route, navController,
             Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-                .padding(vertical = 8.dp)
-
+                .height(80.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         )
 
         CreateMainMenuButton(label = "Browse Drinks", Screen.BrowseDrinksScreen.route, navController,
             Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-                .padding(vertical = 8.dp)
+                .height(80.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         )
 
         CreateMainMenuButton(label = "Your Drinker's List", Screen.ViewListScreen.route, navController,
             Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-                .padding(vertical = 8.dp)
+                .height(80.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         )
     }
 
@@ -86,34 +76,17 @@ fun CreateAppLogoImage(modifier : Modifier){
 }
 
 @Composable
-fun CreateMainMenuButton(label : String, route: String, navController: NavController, modifier : Modifier){
-    val goldGradient = Brush.horizontalGradient(
-        colors = listOf(
-            Color(0x00F57F17),
-            Color(0x7fFFEE58),
-            Color(0x00FFF9C4)
-        ),
-
-    )
+fun CreateMainMenuButton(label : String,route: String, navController: NavController, modifier : Modifier){
     Button(
         onClick = {navController.navigate(route)},
-        modifier = modifier.background(goldGradient),
-        shape = RoundedCornerShape(10f),
-
-
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = Color.White
-        )
+        modifier = modifier
     ) {
         Text(
             text = label,
-            fontSize = 32.sp,
-            fontFamily = Pacifico
+            fontSize = 24.sp
         )
     }
 }
-
 
 @Composable
 fun BottomNavigationBar(
@@ -123,14 +96,18 @@ fun BottomNavigationBar(
     onItemClick: (BottomNavItem) -> Unit
 ){
     val backStackEntry = navController.currentBackStackEntryAsState()
-    NavigationBar(
+    BottomNavigation(
         modifier = modifier,
+        backgroundColor = Color.LightGray,
+        elevation = 5.dp
     ) {
         items.forEach{ item ->
             val selected = item.route == backStackEntry.value?.destination?.route
-            NavigationBarItem(
+            BottomNavigationItem(
                 selected = selected,
                 onClick = { onItemClick(item) },
+                selectedContentColor = Color.Yellow,
+                unselectedContentColor = Color.Gray,
                 icon = {
                     Column(horizontalAlignment = CenterHorizontally) {
                         Icon(
