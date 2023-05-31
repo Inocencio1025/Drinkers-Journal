@@ -1,6 +1,7 @@
 package com.example.drinkersjournal
 
 import androidx.compose.runtime.*
+import com.example.drinkersjournal.data.Drink
 import com.example.drinkersjournal.data.Drinks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
