@@ -33,10 +33,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 
 
-
-
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
-
 @Composable
 fun FavoriteDrinksScreen(navController: NavController){
 

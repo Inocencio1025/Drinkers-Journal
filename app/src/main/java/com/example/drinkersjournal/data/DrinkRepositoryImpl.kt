@@ -1,5 +1,5 @@
 package com.example.drinkersjournal.data
-
+/*
 import kotlinx.coroutines.flow.Flow
 
 class DrinkRepositoryImpl(
@@ -20,4 +20,4 @@ class DrinkRepositoryImpl(
     override fun getFavoriteDrinks(): Flow<Drinks> {
         return dao.getFavoriteDrinks()
     }
-}
+}*/

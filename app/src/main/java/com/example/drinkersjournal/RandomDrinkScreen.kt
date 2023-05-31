@@ -7,7 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -45,6 +45,7 @@ fun RandomDrinkScreen (navController: NavController) {
 }
 
 // Create methods are in DrinkDetailsScreen
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SetContent(navController: NavController) {
 

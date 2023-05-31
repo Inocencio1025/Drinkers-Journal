@@ -1,5 +1,5 @@
 package com.example.drinkersjournal.data
-
+/*
 import androidx.room.RoomDatabase
 
 @androidx.room.Database(
@@ -9,4 +9,4 @@ import androidx.room.RoomDatabase
 abstract class DrinkDatabase: RoomDatabase() {
 
     abstract val dao: DrinkDao
-}
+}*/
