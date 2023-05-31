@@ -1,5 +1,5 @@
 package com.example.drinkersjournal.di
-/*
+
 import android.app.Application
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -32,4 +32,4 @@ object AppModule {
         return DrinkRepositoryImpl(db.dao)
     }
 
-} */
+}

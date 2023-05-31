@@ -1,5 +1,5 @@
 package com.example.drinkersjournal.data
-/*
+
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
@@ -17,4 +17,4 @@ interface DrinkDao {
 
     @Query("SELECT * FROM drink")
     fun getFavoriteDrinks(): Flow<Drinks>
-}*/
+}

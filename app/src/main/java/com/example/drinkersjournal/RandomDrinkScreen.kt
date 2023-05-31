@@ -45,7 +45,6 @@ fun RandomDrinkScreen (navController: NavController) {
 }
 
 // Create methods are in DrinkDetailsScreen
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SetContent(navController: NavController) {
 

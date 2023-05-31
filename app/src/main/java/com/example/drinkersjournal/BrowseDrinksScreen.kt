@@ -7,14 +7,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material.Card
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,7 +62,6 @@ fun BrowseDrinksScreen(navController: NavController){
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController: NavController) {
 
@@ -98,7 +96,7 @@ fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController:
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(bottom = 50.dp)
         ) {
             itemsIndexed(ingredientList) { index, ingredient ->
                 Box(
@@ -133,7 +131,7 @@ fun CreateIngredientCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
-        //elevation = 5.dp
+        elevation = 5.dp
     ) {
         Box(
             modifier = Modifier.height(200.dp),
