@@ -9,6 +9,7 @@ import com.example.drinkersjournal.data.Drink
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,7 +32,11 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 
 
+
+
+
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+
 @Composable
 fun FavoriteDrinksScreen(navController: NavController){
 
@@ -61,30 +66,31 @@ fun FavoriteDrinksScreen(navController: NavController){
                 }
             )
         }
-    ) { innerPadding ->
+    ) {
 
-        SetBackgroundImage()
+
+        //SetBackgroundImage()
+
 
 
         LazyColumn(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(it.calculateBottomPadding())
         ) {
-            itemsIndexed(DrinkersInfo.drinkList){ index, drink:Drink ->
-
+            itemsIndexed(DrinkersInfo.drinkList){ index:Int, drink:Drink ->
                 Row(
                     modifier = Modifier
                         .padding(horizontal = 5.dp, vertical = 5.dp)
                         .fillMaxWidth()
                         .height(100.dp)
                         .clickable {
-                            DrinkersInfo.currentlyViewedDrinkId = drink.idDrink.toString()
+                            DrinkersInfo.currentlyViewedDrinkId = drink.idDrink
                             navController.navigate(Screen.DrinkDetailsScreen.route)
                             //Log.d(TAG, drink.strDrink.toString() + " has been clicked")
                         },
 
-                    ) {
+                    )
 
-
+                {
                     // drink image
                     GlideImage(
                         model = drink.strDrinkThumb.toString(),
