@@ -161,6 +161,7 @@ fun CreateRating(rating: String) {
 private fun CreateButtons(navController: NavController) {
     Row {
 
+        //button to delete from list
         Button(
             onClick = {
                 DrinkersInfo.deleteFromList()
@@ -174,6 +175,7 @@ private fun CreateButtons(navController: NavController) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
+        //button for rating
         Button(onClick = {
 
         }) {

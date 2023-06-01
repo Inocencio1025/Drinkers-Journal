@@ -96,18 +96,18 @@ fun BottomNavigationBar(
     onItemClick: (BottomNavItem) -> Unit
 ){
     val backStackEntry = navController.currentBackStackEntryAsState()
-    BottomNavigation(
+    NavigationBar(
         modifier = modifier,
-        backgroundColor = Color.LightGray,
-        elevation = 5.dp
+        containerColor = Color.LightGray,
+        tonalElevation = 5.dp
     ) {
         items.forEach{ item ->
             val selected = item.route == backStackEntry.value?.destination?.route
-            BottomNavigationItem(
+            NavigationBarItem(
                 selected = selected,
                 onClick = { onItemClick(item) },
-                selectedContentColor = Color.Yellow,
-                unselectedContentColor = Color.Gray,
+                //selectedContentColor = Color.Yellow,
+                //unselectedContentColor = Color.Gray,
                 icon = {
                     Column(horizontalAlignment = CenterHorizontally) {
                         Icon(

@@ -1,37 +1,24 @@
 package com.example.drinkersjournal
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okio.IOException
-import retrofit2.HttpException
-import retrofit2.Response
 
 
 @Composable
@@ -45,37 +32,88 @@ fun RandomDrinkScreen (navController: NavController) {
 }
 
 // Create methods are in DrinkDetailsScreen
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SetContent(navController: NavController) {
 
     var context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     var isInList by remember { mutableStateOf(false) }
 
     isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
 
 
     Scaffold(
+        content = { paddingValues ->
+            SetBackgroundImage()
+            // start of content to display
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 5.dp, bottom = paddingValues.calculateBottomPadding())
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                // drink image
+                CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
+
+                // drink name
+                CreateNameText(nameStr = DrinkersInfo.drinkName.value)
+
+
+
+                CreateButtons()
+
+
+                // display ingredients text, with some conditionals
+                var i = 0
+                DrinkersInfo.ingredients.forEach {
+                    if (DrinkersInfo.measurements.getOrNull(i) != null)
+                        CreateIngredientText(ingStr = DrinkersInfo.measurements[i] + " " + it)
+                    else {
+                        CreateIngredientText(ingStr = it)
+                    }
+                    i++
+                }
+
+                // display instructions
+                CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
+
+
+
+                CreateBottomSpace()
+
+            }
+
+
+
+
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
+                    coroutineScope.launch {
+                        DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
+                    }
 
-                    if(!isInList) {
+                    if (!isInList) {
                         Toast.makeText(context, "Added to list", Toast.LENGTH_SHORT).show()
                     }
                     isInList = !isInList
 
 
                 },
-                contentColor =  Color.White
+                contentColor = Color.White
             ) {
                 if (!isInList) {
                     Icon(
                         imageVector = Icons.Default.FavoriteBorder,
                         contentDescription = "Add to Favorites"
                     )
-                }
-                else {
+                } else {
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = "Add to Favorites"
@@ -109,52 +147,10 @@ private fun SetContent(navController: NavController) {
                 }
             )
         }
-
-    ) {
-
-        SetBackgroundImage()
-        // start of content to display
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 5.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            // drink image
-            CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
-
-            // drink name
-            CreateNameText(nameStr = DrinkersInfo.drinkName.value)
+    )
 
 
-
-            // the unique buttons for this screen
-            CreateButtons()
-
-            // display ingredients text, with some conditionals
-            var i = 0
-            DrinkersInfo.ingredients.forEach {
-                if (DrinkersInfo.measurements.getOrNull(i) != null)
-                    CreateIngredientText(ingStr = DrinkersInfo.measurements[i] + " " + it)
-                else {
-                    CreateIngredientText(ingStr = it)
-                }
-                i++
-            }
-
-            // display instructions
-            CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
-
-            CreateBottomSpace()
-
-        }
-    }
 }
-
 @Composable
 fun CreateBottomSpace(){
 
@@ -166,7 +162,7 @@ fun CreateBottomSpace(){
 private fun CreateButtons() {
 
 
-    Row {
+    Box {
         // random drink button
         Button(
             onClick = { DrinkersInfo.retrieveRandomDrink()},
@@ -176,4 +172,3 @@ private fun CreateButtons() {
         }
     }
 }
-
