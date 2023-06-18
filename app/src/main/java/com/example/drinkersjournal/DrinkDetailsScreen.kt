@@ -100,7 +100,7 @@ fun CreateDrinkImage(img: String) {
         GlideImage(
             model = img,
             contentDescription = "",
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.height(300.dp)
         )
     }
 

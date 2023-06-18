@@ -139,8 +139,10 @@ object DrinkersInfo {
 
 
 
-                if (!DrinkersInfo.isInList(drink.idDrink.toString()))
-                    DrinkersInfo.drinkList.add(drink)
+                if (!isInList()) {
+                    drinkList.add(drink)
+
+                }
             }
         }
     }
@@ -201,6 +203,7 @@ object DrinkersInfo {
                 drinkId.value = response.body()!!.drinks[0].idDrink.toString()
                 drinkName.value = response.body()!!.drinks[0].strDrink.toString()
                 imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
+                currentlyViewedDrinkId = drinkId.value
 
                 //collects ingredients
                 gatherIngredients(response)
@@ -208,6 +211,7 @@ object DrinkersInfo {
 
                 //collect instructions
                 instructions.value = response.body()!!.drinks[0].strInstructions.toString()
+
 
 
             }
@@ -222,9 +226,9 @@ object DrinkersInfo {
     }
 
     //@Composable
-    fun isInList(id: String) : Boolean{
+    fun isInList() : Boolean{
         drinkList.forEach {
-            if (id == it.idDrink.toString()) {
+            if (currentlyViewedDrinkId == it.idDrink) {
                 return true
             }
         }
@@ -379,7 +383,7 @@ object DrinkersInfo {
                 )
 
 
-                if (!isInList(drink.idDrink.toString()))
+                if (!isInList())
                     drinkList.add(drink)
             }
         }

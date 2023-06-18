@@ -69,12 +69,12 @@ fun FavoriteDrinksScreen(navController: NavController){
     ) {
 
 
-        //SetBackgroundImage()
+        SetBackgroundImage()
 
 
 
         LazyColumn(
-            modifier = Modifier.padding(it.calculateBottomPadding())
+            modifier = Modifier.padding(it)
         ) {
             itemsIndexed(DrinkersInfo.drinkList){ index:Int, drink:Drink ->
                 Row(

@@ -1,6 +1,11 @@
 package com.example.drinkersjournal
 
+import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,7 +30,8 @@ import kotlinx.coroutines.launch
 fun RandomDrinkScreen (navController: NavController) {
 
     // Calls to api and gathers the data to display
-    DrinkersInfo.retrieveRandomDrink()
+
+
 
     // sets up content to display
     SetContent(navController)
@@ -38,9 +44,10 @@ private fun SetContent(navController: NavController) {
 
     var context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var isInList by remember { mutableStateOf(false) }
 
-    isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
+    var visible by remember { mutableStateOf(false) }
+    var isInList by remember { mutableStateOf(false) }
+    isInList = DrinkersInfo.isInList()
 
 
     Scaffold(
@@ -57,15 +64,19 @@ private fun SetContent(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // drink image
+
+
+
                 CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
+
+
+
+
+
 
                 // drink name
                 CreateNameText(nameStr = DrinkersInfo.drinkName.value)
 
-
-
-                CreateButtons()
 
 
                 // display ingredients text, with some conditionals
@@ -86,6 +97,8 @@ private fun SetContent(navController: NavController) {
 
                 CreateBottomSpace()
 
+
+
             }
 
 
@@ -95,14 +108,22 @@ private fun SetContent(navController: NavController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    coroutineScope.launch {
-                        DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
-                    }
 
                     if (!isInList) {
-                        Toast.makeText(context, "Added to list", Toast.LENGTH_SHORT).show()
+                        coroutineScope.launch {
+                            Toast.makeText(context, DrinkersInfo.drinkName.value + " added to list", Toast.LENGTH_SHORT).show()
+                            DrinkersInfo.addDrinkById(id = DrinkersInfo.currentlyViewedDrinkId)
+                            isInList = !isInList
+                        }
                     }
-                    isInList = !isInList
+                    else {
+                        DrinkersInfo.deleteFromList()
+                        isInList = !isInList
+
+                    }
+
+                    isInList = DrinkersInfo.isInList()
+
 
 
                 },
@@ -157,6 +178,9 @@ fun CreateBottomSpace(){
     Spacer(modifier = Modifier.height(200.dp))
 }
 
+
+
+/*
 // buttons: randomize drink, save drink
 @Composable
 private fun CreateButtons() {
@@ -165,10 +189,15 @@ private fun CreateButtons() {
     Box {
         // random drink button
         Button(
-            onClick = { DrinkersInfo.retrieveRandomDrink()},
+            onClick = {
+                DrinkersInfo.retrieveRandomDrink()
+
+                      },
             modifier = Modifier.padding(horizontal = 5.dp)
         ) {
             Text(text = "Randomize Drink")
         }
     }
 }
+
+ */

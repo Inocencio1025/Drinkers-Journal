@@ -24,6 +24,7 @@ fun Navigation() {
 
         // View a drink at random
         composable(route = Screen.RandomDrinkScreen.route){
+            DrinkersInfo.retrieveRandomDrink()
             RandomDrinkScreen(navController)
         }
 
