@@ -9,7 +9,6 @@ import com.example.drinkersjournal.data.Drink
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,11 +27,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-
-
-
-
-
+import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.util.Screen
 
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
@@ -76,7 +72,7 @@ fun FavoriteDrinksScreen(navController: NavController){
         LazyColumn(
             modifier = Modifier.padding(it)
         ) {
-            itemsIndexed(DrinkersInfo.drinkList){ index:Int, drink:Drink ->
+            itemsIndexed(DrinkersInfo.favDrinksList){ index:Int, drink:Drink ->
                 Row(
                     modifier = Modifier
                         .padding(horizontal = 5.dp, vertical = 5.dp)

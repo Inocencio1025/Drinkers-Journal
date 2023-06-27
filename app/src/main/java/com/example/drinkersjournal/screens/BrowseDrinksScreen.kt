@@ -27,6 +27,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.data.Ingredient
+import com.example.drinkersjournal.screens.CreateBottomSpace
+import com.example.drinkersjournal.util.Screen
 
 @Composable
 fun BrowseDrinksScreen(navController: NavController){

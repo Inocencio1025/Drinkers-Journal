@@ -1,4 +1,4 @@
-package com.example.drinkersjournal
+package com.example.drinkersjournal.util
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

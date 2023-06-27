@@ -6,6 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.drinkersjournal.screens.DrinkDetailsScreen
+import com.example.drinkersjournal.screens.RandomDrinkScreen
+import com.example.drinkersjournal.util.Screen
 
 @Composable
 fun Navigation() {

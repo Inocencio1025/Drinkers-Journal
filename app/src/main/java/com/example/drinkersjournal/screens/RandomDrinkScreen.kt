@@ -1,11 +1,6 @@
-package com.example.drinkersjournal
+package com.example.drinkersjournal.screens
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,61 +18,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.drinkersjournal.*
+import com.example.drinkersjournal.data.BottomNavItem
 import kotlinx.coroutines.launch
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RandomDrinkScreen (navController: NavController) {
 
-    // Calls to api and gathers the data to display
+    // Boolean for if currently viewed drink is in favorites list
+    var isInList by remember { mutableStateOf(false) }
+    isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
 
-
-
-    // sets up content to display
-    SetContent(navController)
-}
-
-// Create methods are in DrinkDetailsScreen
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SetContent(navController: NavController) {
-
+    // For coroutines
     var context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    var visible by remember { mutableStateOf(false) }
-    var isInList by remember { mutableStateOf(false) }
-    isInList = DrinkersInfo.isInList()
-
 
     Scaffold(
         content = { paddingValues ->
             SetBackgroundImage()
-            // start of content to display
             Spacer(modifier = Modifier.height(20.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 5.dp, bottom = paddingValues.calculateBottomPadding())
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                horizontalAlignment = Alignment.CenterHorizontally)
+            {
 
-
-
-
+                // drink image
                 CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
-
-
-
-
-
 
                 // drink name
                 CreateNameText(nameStr = DrinkersInfo.drinkName.value)
-
-
 
                 // display ingredients text, with some conditionals
                 var i = 0
@@ -92,40 +67,32 @@ private fun SetContent(navController: NavController) {
 
                 // display instructions
                 CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
-
-
-
                 CreateBottomSpace()
-
-
-
             }
-
-
-
-
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-
-                    if (!isInList) {
-                        coroutineScope.launch {
-                            Toast.makeText(context, DrinkersInfo.drinkName.value + " added to list", Toast.LENGTH_SHORT).show()
-                            DrinkersInfo.addDrinkById(id = DrinkersInfo.currentlyViewedDrinkId)
+                    coroutineScope.launch {
+                        if (!isInList) {
+                            DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
                             isInList = !isInList
+                            Toast.makeText(
+                                context,
+                                DrinkersInfo.drinkName.value + " added to list",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            DrinkersInfo.deleteFromList(DrinkersInfo.drinkId.value)
+                            isInList = !isInList
+                            Toast.makeText(
+                                context,
+                                DrinkersInfo.drinkName.value + " removed from list",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
-                    else {
-                        DrinkersInfo.deleteFromList()
-                        isInList = !isInList
-
-                    }
-
-                    isInList = DrinkersInfo.isInList()
-
-
-
+                    isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
                 },
                 contentColor = Color.White
             ) {
@@ -140,7 +107,6 @@ private fun SetContent(navController: NavController) {
                         contentDescription = "Add to Favorites"
                     )
                 }
-
             }
         },
         bottomBar = {
@@ -169,13 +135,6 @@ private fun SetContent(navController: NavController) {
             )
         }
     )
-
-
-}
-@Composable
-fun CreateBottomSpace(){
-
-    Spacer(modifier = Modifier.height(200.dp))
 }
 
 

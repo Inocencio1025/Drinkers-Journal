@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_package = "com.example.drinkersjournal";
+option java_multiple_files = true;
+
+message ListOfDrinks {
+  repeated string drinkID = 1;
+}
+  /*
+  string drinkName = 2;
+  string drinkImgUrl = 3;
+  string rating = 4;
+  int32 ratingNum = 5;
+}
+
+message ListOfDrinks {
+  repeated Drink drink = 1;
+}
+
+   */
+

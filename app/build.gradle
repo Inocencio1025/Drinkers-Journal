@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
+    id "com.google.protobuf"
 }
 
 android {
@@ -46,6 +46,24 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    protobuf {
+        protoc {
+            artifact = "com.google.protobuf:protoc:3.20.1"
+        }
+
+        generateProtoTasks {
+            all().each { task ->
+                task.builtins {
+                    java {
+                        option 'lite'
+                    }
+                    kotlin {
+                        option 'lite'
+                    }
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -77,6 +95,9 @@ dependencies {
     //Coroutine Lifecycle Scopes
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
 
     //Glide  (for downloading images)
     implementation 'com.github.bumptech.glide:glide:4.14.2'
@@ -93,18 +114,11 @@ dependencies {
     implementation"androidx.compose.material3:material3:1.0.1"
     implementation"androidx.compose.material3:material3-window-size-class:1.0.1"
 
+    // for dataStore
+    implementation 'androidx.datastore:datastore:1.0.0'
+    //protobuf
+    implementation 'com.google.protobuf:protobuf-kotlin-lite:3.21.5'
+    implementation 'com.google.protobuf:protobuf-javalite:3.21.5'
 
-    // dagger - hilt
-    implementation"com.google.dagger:hilt-android:2.38.1"
-    kapt "com.google.dagger:hilt-android-compiler:2.37"
-    implementation"androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
-    kapt "androidx.hilt:hilt-compiler:1.0.0"
-    implementation"androidx.hilt:hilt-navigation-compose:1.0.0"
 
-    // room
-    implementation"androidx.room:room-runtime:2.5.1"
-    kapt "androidx.room:room-compiler:2.5.1"
-
-    // koitlin extensions and coroutines support for room
-    implementation"androidx.room:room-ktx:2.5.1"
 }

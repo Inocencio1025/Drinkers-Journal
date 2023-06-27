@@ -1,4 +1,4 @@
-package com.example.drinkersjournal
+package com.example.drinkersjournal.data
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

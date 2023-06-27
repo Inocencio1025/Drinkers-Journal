@@ -1,4 +1,4 @@
-package com.example.drinkersjournal
+package com.example.drinkersjournal.data
 
 class Ingredient (
     val name: String,
