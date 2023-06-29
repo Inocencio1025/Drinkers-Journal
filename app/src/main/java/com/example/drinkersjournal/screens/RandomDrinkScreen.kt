@@ -1,6 +1,8 @@
 package com.example.drinkersjournal.screens
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +24,8 @@ import com.example.drinkersjournal.*
 import com.example.drinkersjournal.data.BottomNavItem
 import kotlinx.coroutines.launch
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RandomDrinkScreen (navController: NavController) {
@@ -33,6 +37,8 @@ fun RandomDrinkScreen (navController: NavController) {
     // For coroutines
     var context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+
 
     Scaffold(
         content = { paddingValues ->

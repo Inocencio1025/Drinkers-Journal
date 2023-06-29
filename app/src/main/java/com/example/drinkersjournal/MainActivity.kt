@@ -5,17 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import com.example.drinkersjournal.util.FavDrinkSerializer
 import com.example.drinkersjournal.util.FavDrinksDataStore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import java.util.prefs.Preferences
-
+import com.example.drinkersjournal.util.Navigation
 
 
 class MainActivity : ComponentActivity() {

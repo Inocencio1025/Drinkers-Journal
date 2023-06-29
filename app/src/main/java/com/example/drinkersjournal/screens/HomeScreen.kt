@@ -21,6 +21,8 @@ import com.example.drinkersjournal.util.Screen
 @Composable
 fun HomeScreen(navController: NavController){
 
+    DrinkersInfo.retrieveRandomDrink()
+
     SetBackgroundImage()
 
 
@@ -140,5 +142,4 @@ fun SetBackgroundImage(){
             contentScale = ContentScale.FillBounds
         )
     }
-
 }

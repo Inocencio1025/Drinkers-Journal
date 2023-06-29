@@ -1,21 +1,20 @@
 package com.example.drinkersjournal.screens
 
 import android.widget.Toast
+import androidx.compose.animation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.layoutId
@@ -28,16 +27,19 @@ import com.example.drinkersjournal.SetBackgroundImage
 import com.example.drinkersjournal.data.BottomNavItem
 import kotlinx.coroutines.launch
 
-private var hasRating = false
-private var hasRatingText = false
 var stringRating = mutableStateOf("")
+var intRating = mutableStateOf(0)
+var hasRating = mutableStateOf(false)
 var isRating = mutableStateOf(false)
+var isDoneRating = mutableStateOf(true)
 
 
 
 @Composable
 fun DrinkDetailsScreen (navController: NavController) {
-
+    stringRating.value = ""
+    intRating.value = 0
+    isRating.value = false
     // Searches drink with ID that is currently stored in DrinkersInfo
     // and stores retrieved info in DrinkersInfo
     DrinkersInfo.retrieveDrinkInfo()
@@ -60,6 +62,8 @@ private fun SetContent(navController: NavController) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+
+
     Scaffold(
         content = { paddingValues ->
             SetBackgroundImage()
@@ -81,24 +85,34 @@ private fun SetContent(navController: NavController) {
                 CreateNameText(nameStr = DrinkersInfo.drinkName.value)
 
                 //Displays Rating
-                CreateRatingText()
+                CreateRating()
 
                 //Add Button for rating
-                if(isInList){
-                    Button(onClick = {
-                        // add rating text to object here
-                        isRating.value = !isRating.value
-
-                    }) {
+                AnimatedVisibility(visible = isInList) {
+                    val currentDrink = DrinkersInfo.favDrinksList.find { it.idDrink == DrinkersInfo.drinkId.value }
+                    Button(
+                        onClick = {
+                            // add rating text to object here
+                            isRating.value = !isRating.value
+                            isDoneRating.value = !isDoneRating.value
+                            DrinkersInfo.addRatingToDrinkByID(DrinkersInfo.drinkId.value, stringRating.value, intRating.value )
+                            if (currentDrink != null) {
+                                stringRating.value = currentDrink.ratingText.toString()
+                                intRating.value = currentDrink.rating!!
+                            }
+                        },
+                        modifier = Modifier.padding(vertical = 10.dp)
+                    ) {
                         if(isRating.value){
                             Text(text = "Save Rating")
                         }
-                        else if(hasRating || hasRatingText)
+                        else if (currentDrink != null && currentDrink.hasRating())
                             Text(text = "Edit Rating")
                         else
                             Text(text = "Add Rating")
                     }
                 }
+
 
                 // Displays ingredients
                 var i = 0
@@ -210,38 +224,87 @@ fun CreateNameText(nameStr: String){
         fontSize = 40.sp,
         modifier = Modifier.layoutId("drinkName")
     )
-    Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateRatingText() {
+fun CreateRating() {
+    //Text
+    AnimatedVisibility(
+        visible= stringRating.value != "" && !isRating.value,
+        enter = slideInVertically () + expandVertically() + fadeIn(),
+        exit = slideOutVertically () + shrinkVertically() + fadeOut()
+
+        ){
+            Text(text = "\"" + stringRating.value + "\"",
+                color = Color.Green,
+                fontSize = 24.sp)
+    }
+
+    //Displaying the stars
+    AnimatedVisibility(visible = intRating.value > 0 || isRating.value) {
+        CreateRatingStar(
+            maxRating = 5,
+            currentRating = intRating.value,
+            onRatingChanged = { newRating ->
+                intRating.value = if (newRating == intRating.value) 0 else newRating
+            }
+        )
+    }
 
 
-    if(isRating.value){
+    //TextBox
+    AnimatedVisibility(visible = isRating.value){
         TextField(
             value = stringRating.value,
             onValueChange = { newText ->
                 stringRating.value = newText
             }
         )
-    } else{
-        if (stringRating.value.isNotEmpty()){
-            Text(text = "\"" + stringRating.value + "\"",
-                color = Color.Green,
-                fontSize = 24.sp)
-        }
     }
-    Spacer(modifier = Modifier.height(5.dp))
-
 }
 
 @Composable
-fun CreateRating(rating: String) {
+fun CreateRatingStar(
+    maxRating: Int,
+    currentRating: Int,
+    onRatingChanged: (Int) -> Unit
+) {
+
+
+    Row(Modifier.padding(8.dp)) {
+        for (i in 1..maxRating) {
+            val isFilled = i <= currentRating
+
+            val starIcon = if (isFilled) {
+                Icons.Filled.Star
+            } else {
+                Icons.Outlined.Star
+            }
+
+            Icon(
+                imageVector = starIcon,
+                contentDescription = null,
+                modifier = Modifier
+                    .clickable {
+                        onRatingChanged(i)
+                    }
+                    .padding(4.dp),
+                tint = if (isFilled) Color.Yellow else Color.Yellow.copy(
+                    alpha = .4f
+                )
+            )
+        }
+    }
+}
+
+
+@Composable
+fun CreateRatinglkjh(rating: String) {
     if (rating == "0" || rating == "null") {
-        hasRating = false
         return
     }
 
@@ -256,7 +319,6 @@ fun CreateRating(rating: String) {
     )
     Spacer(modifier = Modifier.height(10.dp))
 
-    hasRating = true
 }
 
 @Composable

@@ -1,11 +1,9 @@
-package com.example.drinkersjournal
+package com.example.drinkersjournal.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
@@ -27,39 +25,46 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.example.drinkersjournal.BottomNavigationBar
+import com.example.drinkersjournal.DrinkersInfo
+import com.example.drinkersjournal.SetBackgroundImage
 import com.example.drinkersjournal.data.BottomNavItem
 import com.example.drinkersjournal.data.Ingredient
-import com.example.drinkersjournal.screens.CreateBottomSpace
 import com.example.drinkersjournal.util.Screen
+import retrofit2.http.Header
+
+val nonAlcoholicList = mutableListOf<Ingredient>()
+val alcoholicList = mutableListOf<Ingredient>()
+
 
 @Composable
 fun BrowseDrinksScreen(navController: NavController){
 
-    val ingredientList = mutableListOf<Ingredient>()
 
 
-    ingredientList.add(Ingredient("Vodka", "https://www.thecocktaildb.com/images/ingredients/vodka-Medium.png"))
-    ingredientList.add(Ingredient("Tequila", "https://www.thecocktaildb.com/images/ingredients/tequila-Medium.png"))
-    ingredientList.add(Ingredient("Rum", "https://www.thecocktaildb.com/images/ingredients/rum-Medium.png"))
-    ingredientList.add(Ingredient("Gin", "https://www.thecocktaildb.com/images/ingredients/gin-Medium.png"))
-    ingredientList.add(Ingredient("Whiskey", "https://www.thecocktaildb.com/images/ingredients/whiskey-Medium.png"))
-    ingredientList.add(Ingredient("Blended_Whiskey", "https://www.thecocktaildb.com/images/ingredients/Blended%20whiskey-Medium.png"))
-    ingredientList.add(Ingredient("Light_Rum", "https://www.thecocktaildb.com/images/ingredients/Light%20rum-Medium.png"))
-    ingredientList.add(Ingredient("Bourbon", "https://www.thecocktaildb.com/images/ingredients/bourbon-Medium.png"))
-    ingredientList.add(Ingredient("Brandy", "https://www.thecocktaildb.com/images/ingredients/brandy-Medium.png"))
-    ingredientList.add(Ingredient("Amaretto", "https://www.thecocktaildb.com/images/ingredients/amaretto-Medium.png"))
-    ingredientList.add(Ingredient("Malibu_Rum", "https://www.thecocktaildb.com/images/ingredients/Malibu%20rum-Medium.png"))
-    ingredientList.add(Ingredient("Dry_Vermouth", "https://www.thecocktaildb.com/images/ingredients/Dry%20vermouth-Medium.png"))
-    ingredientList.add(Ingredient("Triple_Sec", "https://www.thecocktaildb.com/images/ingredients/Triple%20sec-Medium.png"))
-    ingredientList.add(Ingredient("Coffee_Liqueur", "https://www.thecocktaildb.com/images/ingredients/Coffee%20liqueur-Medium.png"))
-    ingredientList.add(Ingredient("Club_Soda", "https://www.thecocktaildb.com/images/ingredients/Club%20soda-Medium.png"))
-    ingredientList.add(Ingredient("Grenadine", "https://www.thecocktaildb.com/images/ingredients/grenadine-Medium.png"))
-    ingredientList.add(Ingredient("Orange_Juice", "https://www.thecocktaildb.com/images/ingredients/Orange%20juice-Medium.png"))
-    ingredientList.add(Ingredient("Cranberry_Juice", "https://www.thecocktaildb.com/images/ingredients/Cranberry%20juice-Medium.png"))
-    ingredientList.add(Ingredient("Blue Curacao", "https://www.thecocktaildb.com/images/ingredients/Blue%20curacao-Medium.png"))
+
+    alcoholicList.add(Ingredient("Vodka", "https://www.thecocktaildb.com/images/ingredients/vodka-Medium.png"))
+    alcoholicList.add(Ingredient("Tequila", "https://www.thecocktaildb.com/images/ingredients/tequila-Medium.png"))
+    alcoholicList.add(Ingredient("Rum", "https://www.thecocktaildb.com/images/ingredients/rum-Medium.png"))
+    alcoholicList.add(Ingredient("Gin", "https://www.thecocktaildb.com/images/ingredients/gin-Medium.png"))
+    alcoholicList.add(Ingredient("Whiskey", "https://www.thecocktaildb.com/images/ingredients/whiskey-Medium.png"))
+    alcoholicList.add(Ingredient("Blended_Whiskey", "https://www.thecocktaildb.com/images/ingredients/Blended%20whiskey-Medium.png"))
+    alcoholicList.add(Ingredient("Light_Rum", "https://www.thecocktaildb.com/images/ingredients/Light%20rum-Medium.png"))
+    alcoholicList.add(Ingredient("Bourbon", "https://www.thecocktaildb.com/images/ingredients/bourbon-Medium.png"))
+    alcoholicList.add(Ingredient("Brandy", "https://www.thecocktaildb.com/images/ingredients/brandy-Medium.png"))
+    alcoholicList.add(Ingredient("Amaretto", "https://www.thecocktaildb.com/images/ingredients/amaretto-Medium.png"))
+    alcoholicList.add(Ingredient("Malibu_Rum", "https://www.thecocktaildb.com/images/ingredients/Malibu%20rum-Medium.png"))
+    alcoholicList.add(Ingredient("Dry_Vermouth", "https://www.thecocktaildb.com/images/ingredients/Dry%20vermouth-Medium.png"))
+    alcoholicList.add(Ingredient("Triple_Sec", "https://www.thecocktaildb.com/images/ingredients/Triple%20sec-Medium.png"))
+    alcoholicList.add(Ingredient("Coffee_Liqueur", "https://www.thecocktaildb.com/images/ingredients/Coffee%20liqueur-Medium.png"))
+    nonAlcoholicList.add(Ingredient("Club_Soda", "https://www.thecocktaildb.com/images/ingredients/Club%20soda-Medium.png"))
+    nonAlcoholicList.add(Ingredient("Grenadine", "https://www.thecocktaildb.com/images/ingredients/grenadine-Medium.png"))
+    nonAlcoholicList.add(Ingredient("Orange_Juice", "https://www.thecocktaildb.com/images/ingredients/Orange%20juice-Medium.png"))
+    nonAlcoholicList.add(Ingredient("Cranberry_Juice", "https://www.thecocktaildb.com/images/ingredients/Cranberry%20juice-Medium.png"))
+    nonAlcoholicList.add(Ingredient("Blue Curacao", "https://www.thecocktaildb.com/images/ingredients/Blue%20curacao-Medium.png"))
 
 
-    CreateIngredientList(ingredientList, navController)
+    CreateIngredientList(navController)
 
 
 
@@ -69,7 +74,7 @@ fun BrowseDrinksScreen(navController: NavController){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController: NavController) {
+fun CreateIngredientList(navController: NavController) {
 
     Scaffold(
         bottomBar = {
@@ -100,11 +105,36 @@ fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController:
     ) {
         SetBackgroundImage()
 
+
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(it)
+            modifier = Modifier
+                .padding(it)
         ) {
-            itemsIndexed(ingredientList) { index, ingredient ->
+            header {
+                CreateCategoryTitle(text = "Alcoholic Ingredients")
+            }
+            itemsIndexed(alcoholicList) { index, ingredient ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .padding(16.dp)
+                        .clickable {
+                            DrinkersInfo.ingredientForDrinkList = ingredient.name
+                            navController.navigate(Screen.DrinkListByIngredientScreen.route)
+                        }
+                ){
+                    CreateIngredientCard(
+                        drinkName = ingredient.name,
+                        imageUrl = ingredient.imageUrl
+                    )
+                }
+            }
+            header {
+                CreateCategoryTitle(text = "Nonalcoholic Ingredients")
+            }
+            itemsIndexed(nonAlcoholicList) { index, ingredient ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
@@ -123,9 +153,28 @@ fun CreateIngredientList(ingredientList: MutableList<Ingredient>, navController:
         }
         CreateBottomSpace()
     }
-
 }
 
+fun LazyGridScope.header(
+    content: @Composable LazyGridItemScope.() -> Unit
+) {
+    item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+}
+
+@Composable
+fun CreateCategoryTitle(text: String){
+    Box(
+        modifier = Modifier
+            .padding(vertical = 24.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            fontSize = 24.sp)
+    }
+}
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable

@@ -1,14 +1,10 @@
 package com.example.drinkersjournal
 
 
-import android.content.Context
 import androidx.compose.runtime.*
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
 import com.example.drinkersjournal.data.Drink
 import com.example.drinkersjournal.data.DrinkByIngredients
 import com.example.drinkersjournal.data.Drinks
-import com.example.drinkersjournal.util.FavDrinkSerializer
 import com.example.drinkersjournal.util.FavDrinksDataStore
 import com.example.drinkersjournal.util.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
@@ -370,6 +366,21 @@ var favDrinksDataStore: FavDrinksDataStore
     lateinit var favDrinksDataStore: FavDrinksDataStore
     fun setDataStore(favDrinksDataStore: FavDrinksDataStore) {
         this.favDrinksDataStore = favDrinksDataStore
+    }
+
+    fun addRatingToDrinkByID(drinkId: String, ratingString: String, ratingNum: Int) {
+        val targetDrink = favDrinksList.find { it.idDrink == drinkId }
+        if (targetDrink != null) {
+            targetDrink.ratingText = ratingString
+            targetDrink.rating = ratingNum
+        }
+        ratingText.value = ratingString
+        rating.value = ratingNum.toString()
+    }
+
+    suspend fun clearList(){
+        favDrinksList.clear()
+        favDrinksDataStore.clearListOfDrinks()
     }
 
 
