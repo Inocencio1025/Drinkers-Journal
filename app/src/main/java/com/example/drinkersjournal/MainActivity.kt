@@ -5,8 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Color
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
+import com.example.drinkersjournal.ui.theme.DrinkersJournalTheme
 import com.example.drinkersjournal.util.FavDrinkSerializer
 import com.example.drinkersjournal.util.FavDrinksDataStore
 import com.example.drinkersjournal.util.Navigation
@@ -25,39 +27,18 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.statusBarColor = Color.Black.hashCode()
+
         super.onCreate(savedInstanceState)
         setContent {
+            DrinkersJournalTheme{
 
-
-            LaunchedEffect(Unit) {
-
-                DrinkersInfo.setDataStore(favDrinksDataStore)
-                /*
-                favDrinksDataStore.saveNewDrink("17060")
-                favDrinksDataStore.saveNewDrink("17020")
-                favDrinksDataStore.saveNewDrink("13395")
-                favDrinksDataStore.saveNewDrink("14688")
-
-                 */
-
-
-                DrinkersInfo.setList(favDrinksDataStore.favDrinksFlow)
+                LaunchedEffect(Unit) {
+                    DrinkersInfo.setDataStore(favDrinksDataStore)
+                    DrinkersInfo.setList(favDrinksDataStore.favDrinksFlow)
+                }
+                Navigation()
             }
-
-
-
-
-            Navigation()
-
-            /*
-            //test drinks for favorites list
-            DrinkersInfo.addTestDrink("17060", 0, "asss checkss")
-            DrinkersInfo.addTestDrink("17020", 0, "")
-            DrinkersInfo.addTestDrink("13395", 1, "woblles")
-            DrinkersInfo.addTestDrink("14688", 2, "")
-            DrinkersInfo.addTestDrink("12762", 9, "kkjhgh")
-
-             */
 
 
         }

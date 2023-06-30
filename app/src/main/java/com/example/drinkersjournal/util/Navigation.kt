@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.drinkersjournal.*
 import com.example.drinkersjournal.screens.BrowseDrinksScreen
 import com.example.drinkersjournal.screens.DrinkDetailsScreen
+import com.example.drinkersjournal.screens.HomeScreen
 import com.example.drinkersjournal.screens.RandomDrinkScreen
 
 @Composable
@@ -31,10 +32,7 @@ fun Navigation() {
         composable(route = Screen.RandomDrinkScreen.route){
 
             RandomDrinkScreen(navController)
-            LaunchedEffect(Unit){
-                DrinkersInfo.retrieveRandomDrink()
 
-            }
         }
 
         // View drink details

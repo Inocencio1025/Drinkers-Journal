@@ -25,13 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.drinkersjournal.BottomNavigationBar
 import com.example.drinkersjournal.DrinkersInfo
-import com.example.drinkersjournal.SetBackgroundImage
 import com.example.drinkersjournal.data.BottomNavItem
 import com.example.drinkersjournal.data.Ingredient
 import com.example.drinkersjournal.util.Screen
-import retrofit2.http.Header
 
 val nonAlcoholicList = mutableListOf<Ingredient>()
 val alcoholicList = mutableListOf<Ingredient>()

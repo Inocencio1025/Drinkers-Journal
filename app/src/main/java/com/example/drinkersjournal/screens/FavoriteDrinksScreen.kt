@@ -29,6 +29,8 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.screens.BottomNavigationBar
+import com.example.drinkersjournal.screens.SetBackgroundImage
 import com.example.drinkersjournal.util.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -2,9 +2,11 @@ package com.example.drinkersjournal.screens
 
 import android.widget.Toast
 import androidx.compose.animation.*
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -21,9 +23,7 @@ import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.drinkersjournal.BottomNavigationBar
 import com.example.drinkersjournal.DrinkersInfo
-import com.example.drinkersjournal.SetBackgroundImage
 import com.example.drinkersjournal.data.BottomNavItem
 import kotlinx.coroutines.launch
 
@@ -154,7 +154,9 @@ private fun SetContent(navController: NavController) {
                     }
                     isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
                 },
-                contentColor = Color.White
+                contentColor = Color.White,
+                shape = CircleShape
+
             ) {
                 if (!isInList) {
                     Icon(
@@ -201,16 +203,30 @@ private fun SetContent(navController: NavController) {
 // ------------------Composable for drink display----------------------------------------------//
 
 
-@OptIn(ExperimentalGlideComposeApi::class) //for glideImage
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalAnimationApi::class) //for glideImage
 @Composable
 fun CreateDrinkImage(img: String) {
 
+    val state = remember {
+        MutableTransitionState(false).apply {
+            // Start the animation immediately.
+            targetState = true
+        }
+    }
+
     Box(modifier = Modifier.padding(24.dp)){
-        GlideImage(
-            model = img,
-            contentDescription = "",
-            modifier = Modifier.height(200.dp)
-        )
+        AnimatedVisibility(visibleState = state, ) {
+            GlideImage(
+                model = img,
+                contentDescription = "",
+                modifier = Modifier.height(200.dp)
+                    .animateEnterExit(
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    )
+            )
+        }
+
     }
 
 

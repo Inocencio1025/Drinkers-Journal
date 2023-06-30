@@ -1,10 +1,9 @@
 package com.example.drinkersjournal.screens
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
@@ -29,7 +28,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RandomDrinkScreen (navController: NavController) {
+    LaunchedEffect(Unit){
+        DrinkersInfo.retrieveRandomDrink()
 
+    }
     // Boolean for if currently viewed drink is in favorites list
     var isInList by remember { mutableStateOf(false) }
     isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
@@ -100,7 +102,8 @@ fun RandomDrinkScreen (navController: NavController) {
                     }
                     isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
                 },
-                contentColor = Color.White
+                contentColor = Color.White,
+                shape = CircleShape
             ) {
                 if (!isInList) {
                     Icon(
@@ -135,9 +138,9 @@ fun RandomDrinkScreen (navController: NavController) {
                     )
                 ),
                 navController = navController,
-                onItemClick = {
-                    navController.navigate(it.route)
-                }
+                onItemClick = { navController.navigate(it.route) },
+
+
             )
         }
     )
