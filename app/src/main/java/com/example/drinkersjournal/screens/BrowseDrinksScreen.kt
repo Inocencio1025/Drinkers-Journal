@@ -5,21 +5,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -28,18 +24,23 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.BottomNavItem
 import com.example.drinkersjournal.data.Ingredient
+import com.example.drinkersjournal.ui.theme.drinkNameFont
+import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
 import com.example.drinkersjournal.util.Screen
 
 val nonAlcoholicList = mutableListOf<Ingredient>()
 val alcoholicList = mutableListOf<Ingredient>()
 
+// holds ingredient to be search
+var ingredientForSearchList = ""
 
 @Composable
 fun BrowseDrinksScreen(navController: NavController){
+    CreateIngredientList(navController)
+}
 
-
-
-
+fun setBrowseScreen() {
+    //alcoholic drinks
     alcoholicList.add(Ingredient("Vodka", "https://www.thecocktaildb.com/images/ingredients/vodka-Medium.png"))
     alcoholicList.add(Ingredient("Tequila", "https://www.thecocktaildb.com/images/ingredients/tequila-Medium.png"))
     alcoholicList.add(Ingredient("Rum", "https://www.thecocktaildb.com/images/ingredients/rum-Medium.png"))
@@ -54,19 +55,12 @@ fun BrowseDrinksScreen(navController: NavController){
     alcoholicList.add(Ingredient("Dry_Vermouth", "https://www.thecocktaildb.com/images/ingredients/Dry%20vermouth-Medium.png"))
     alcoholicList.add(Ingredient("Triple_Sec", "https://www.thecocktaildb.com/images/ingredients/Triple%20sec-Medium.png"))
     alcoholicList.add(Ingredient("Coffee_Liqueur", "https://www.thecocktaildb.com/images/ingredients/Coffee%20liqueur-Medium.png"))
+    // nonalcoholic drinks
     nonAlcoholicList.add(Ingredient("Club_Soda", "https://www.thecocktaildb.com/images/ingredients/Club%20soda-Medium.png"))
     nonAlcoholicList.add(Ingredient("Grenadine", "https://www.thecocktaildb.com/images/ingredients/grenadine-Medium.png"))
     nonAlcoholicList.add(Ingredient("Orange_Juice", "https://www.thecocktaildb.com/images/ingredients/Orange%20juice-Medium.png"))
     nonAlcoholicList.add(Ingredient("Cranberry_Juice", "https://www.thecocktaildb.com/images/ingredients/Cranberry%20juice-Medium.png"))
     nonAlcoholicList.add(Ingredient("Blue Curacao", "https://www.thecocktaildb.com/images/ingredients/Blue%20curacao-Medium.png"))
-
-
-    CreateIngredientList(navController)
-
-
-
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,12 +79,12 @@ fun CreateIngredientList(navController: NavController) {
                     BottomNavItem(
                         name = "Browse",
                         route = "browse_drinks_screen",
-                        icon = Icons.Default.List
+                        icon = Icons.Default.Search
                     ),
                     BottomNavItem(
                         name = "Favorites",
                         route = "view_list_screen",
-                        icon = Icons.Default.Favorite
+                        icon = Icons.Default.List
                     )
                 ),
                 navController = navController,
@@ -101,6 +95,7 @@ fun CreateIngredientList(navController: NavController) {
         }
     ) {
         SetBackgroundImage()
+
 
 
 
@@ -118,7 +113,8 @@ fun CreateIngredientList(navController: NavController) {
                         .fillMaxWidth(0.5f)
                         .padding(16.dp)
                         .clickable {
-                            DrinkersInfo.ingredientForDrinkList = ingredient.name
+                            ingredientForSearchList = ingredient.name
+                            DrinkersInfo.retrieveDrinksByIngredient(ingredientForSearchList)
                             navController.navigate(Screen.DrinkListByIngredientScreen.route)
                         }
                 ){
@@ -137,7 +133,8 @@ fun CreateIngredientList(navController: NavController) {
                         .fillMaxWidth(0.5f)
                         .padding(16.dp)
                         .clickable {
-                            DrinkersInfo.ingredientForDrinkList = ingredient.name
+                            ingredientForSearchList = ingredient.name
+                            DrinkersInfo.retrieveDrinksByIngredient(ingredientForSearchList)
                             navController.navigate(Screen.DrinkListByIngredientScreen.route)
                         }
                 ){
@@ -160,16 +157,23 @@ fun LazyGridScope.header(
 
 @Composable
 fun CreateCategoryTitle(text: String){
-    Box(
-        modifier = Modifier
-            .padding(vertical = 24.dp)
-            .fillMaxWidth(),
-        contentAlignment = Alignment.Center
+    Surface(
+        modifier = Modifier.padding(top = 5.dp, start = 8.dp, end = 8.dp)
     ) {
-        Text(
-            text = text,
-            color = Color.White,
-            fontSize = 24.sp)
+        Box(
+            modifier = Modifier
+                .padding(vertical = 24.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                color = Color.White,
+                fontSize = 32.sp,
+                fontFamily = drinkRatingTextFont
+
+            )
+        }
     }
 }
 
@@ -212,17 +216,17 @@ fun CreateIngredientCard(
             )
 
             //name text
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
-            ){
+            ) {
                 Text(
                     text = drinkName,
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 16.sp
-                    )
+                    fontFamily = drinkNameFont,
+                    color = Color.White,
+                    fontSize = 20.sp
+
                 )
             }
         }

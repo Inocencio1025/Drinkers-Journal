@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.layoutId
@@ -25,6 +26,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.ui.theme.drinkNameFont
+import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
 import kotlinx.coroutines.launch
 
 var stringRating = mutableStateOf("")
@@ -32,6 +35,7 @@ var intRating = mutableStateOf(0)
 var hasRating = mutableStateOf(false)
 var isRating = mutableStateOf(false)
 var isDoneRating = mutableStateOf(true)
+var isInList = mutableStateOf(false)
 
 
 
@@ -41,8 +45,9 @@ fun DrinkDetailsScreen (navController: NavController) {
     intRating.value = 0
     isRating.value = false
     // Searches drink with ID that is currently stored in DrinkersInfo
-    // and stores retrieved info in DrinkersInfo
-    DrinkersInfo.retrieveDrinkInfo()
+    // and stores retrieved info in DrinkersInfo. isIntList is bool
+    // for if retrieved drink is in fav list
+    isInList.value = DrinkersInfo.retrieveDrinkInfo()
 
     // sets up content to display
     SetContent(navController)
@@ -53,9 +58,16 @@ fun DrinkDetailsScreen (navController: NavController) {
 private fun SetContent(navController: NavController) {
 
 
-    // Boolean for if currently viewed drink is in favorites list
-    var isInList by remember { mutableStateOf(false) }
-    isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
+
+    if(isInList.value) {
+        var currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DrinkersInfo.drinkId.value }
+        if (currentDrink != null) {
+            stringRating.value = currentDrink.ratingText.toString()
+            intRating.value = currentDrink.rating
+        }
+    }
+
+
 
 
     // For coroutines
@@ -88,30 +100,10 @@ private fun SetContent(navController: NavController) {
                 CreateRating()
 
                 //Add Button for rating
-                AnimatedVisibility(visible = isInList) {
-                    val currentDrink = DrinkersInfo.favDrinksList.find { it.idDrink == DrinkersInfo.drinkId.value }
-                    Button(
-                        onClick = {
-                            // add rating text to object here
-                            isRating.value = !isRating.value
-                            isDoneRating.value = !isDoneRating.value
-                            DrinkersInfo.addRatingToDrinkByID(DrinkersInfo.drinkId.value, stringRating.value, intRating.value )
-                            if (currentDrink != null) {
-                                stringRating.value = currentDrink.ratingText.toString()
-                                intRating.value = currentDrink.rating!!
-                            }
-                        },
-                        modifier = Modifier.padding(vertical = 10.dp)
-                    ) {
-                        if(isRating.value){
-                            Text(text = "Save Rating")
-                        }
-                        else if (currentDrink != null && currentDrink.hasRating())
-                            Text(text = "Edit Rating")
-                        else
-                            Text(text = "Add Rating")
-                    }
+                AnimatedVisibility(visible = isInList.value) {
+                    CreateRateButton()
                 }
+
 
 
                 // Displays ingredients
@@ -134,31 +126,31 @@ private fun SetContent(navController: NavController) {
             FloatingActionButton(
                 onClick = {
                     coroutineScope.launch {
-                        if (!isInList) {
+                        if (!isInList.value) {
                             DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
-                            isInList = !isInList
+                            isInList.value = !isInList.value
                             Toast.makeText(
                                 context,
-                                DrinkersInfo.drinkName.value + " added to list",
+                                DrinkersInfo.drinkName.value + " added to favorites",
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
                             DrinkersInfo.deleteFromList(DrinkersInfo.drinkId.value)
-                            isInList = !isInList
+                            isInList.value = !isInList.value
                             Toast.makeText(
                                 context,
-                                DrinkersInfo.drinkName.value + " removed from list",
+                                DrinkersInfo.drinkName.value + " removed from favorites",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     }
-                    isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
+                    isInList.value = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
                 },
-                contentColor = Color.White,
+                contentColor = Color.Yellow,
                 shape = CircleShape
 
             ) {
-                if (!isInList) {
+                if (!isInList.value) {
                     Icon(
                         imageVector = Icons.Default.FavoriteBorder,
                         contentDescription = "Add to Favorites"
@@ -182,12 +174,12 @@ private fun SetContent(navController: NavController) {
                     BottomNavItem(
                         name = "Browse",
                         route = "browse_drinks_screen",
-                        icon = Icons.Default.List
+                        icon = Icons.Default.Search
                     ),
                     BottomNavItem(
                         name = "Favorites",
                         route = "view_list_screen",
-                        icon = Icons.Default.Favorite
+                        icon = Icons.Default.List
                     )
                 ),
                 navController = navController,
@@ -219,7 +211,8 @@ fun CreateDrinkImage(img: String) {
             GlideImage(
                 model = img,
                 contentDescription = "",
-                modifier = Modifier.height(200.dp)
+                modifier = Modifier
+                    .height(200.dp)
                     .animateEnterExit(
                         enter = fadeIn(),
                         exit = fadeOut()
@@ -238,7 +231,8 @@ fun CreateNameText(nameStr: String){
         text = nameStr,
         color = Color.White,
         fontSize = 40.sp,
-        modifier = Modifier.layoutId("drinkName")
+        modifier = Modifier.layoutId("drinkName"),
+        fontFamily = drinkNameFont
     )
     Spacer(modifier = Modifier.height(10.dp))
 }
@@ -257,12 +251,13 @@ fun CreateRating() {
         ){
             Text(text = "\"" + stringRating.value + "\"",
                 color = Color.Green,
-                fontSize = 24.sp)
+                fontSize = 24.sp,
+                fontFamily = drinkRatingTextFont)
     }
 
     //Displaying the stars
     AnimatedVisibility(visible = intRating.value > 0 || isRating.value) {
-        CreateRatingStar(
+        CreateRatingStars(
             maxRating = 5,
             currentRating = intRating.value,
             onRatingChanged = { newRating ->
@@ -284,7 +279,7 @@ fun CreateRating() {
 }
 
 @Composable
-fun CreateRatingStar(
+fun CreateRatingStars(
     maxRating: Int,
     currentRating: Int,
     onRatingChanged: (Int) -> Unit
@@ -317,30 +312,38 @@ fun CreateRatingStar(
     }
 }
 
-
 @Composable
-fun CreateRatinglkjh(rating: String) {
-    if (rating == "0" || rating == "null") {
-        return
+private fun CreateRateButton() {
+    val currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DrinkersInfo.drinkId.value }
+    Button(
+        modifier = Modifier.padding(vertical = 10.dp),
+        onClick = {
+            isRating.value = !isRating.value
+            isDoneRating.value = !isDoneRating.value
+
+
+            if (currentDrink != null) {
+                DrinkersInfo.addRatingToDrinkByID(currentDrink, stringRating.value, intRating.value)
+
+                //set flags
+                stringRating.value = currentDrink.ratingText.toString()
+                intRating.value = currentDrink.rating
+                hasRating.value = currentDrink.hasRating()
+            }
+            if (currentDrink != null) {
+
+
+            }
+        }
+    ) {
+        if(isRating.value){
+                Text(text = "Save Rating")
+        }
+        else if (currentDrink != null && currentDrink.hasRating())
+            Text(text = "Edit Rating")
+        else
+            Text(text = "Add Rating")
     }
-
-    DrinkersInfo.rating.value = rating
-    Text(
-        text = "Rating: ",
-        color = Color.Yellow
-    )
-    Text(
-        text = DrinkersInfo.rating.value,
-        color = Color.White
-    )
-    Spacer(modifier = Modifier.height(10.dp))
-
-}
-
-@Composable
-private fun CreateRateButton(isRating: Boolean) {
-    //button for rating
-
 }
 
 
@@ -363,6 +366,7 @@ fun CreateInstructionText(instrStr: String){
 
     Text(
         text = "Directions:",
+        textDecoration = TextDecoration.Underline,
         color = Color.Red,
         fontSize = 20.sp
     )

@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 
 data class Drink(
-
     val idDrink: String,
     val strDrink: String?,
     val strDrinkAlternate: String?,
@@ -64,7 +63,6 @@ data class Drink(
     var ratingText: String?
 ) {
     fun hasRating(): Boolean {
-        return !(rating.toString().isNullOrEmpty() && ratingText.toString().isNullOrEmpty())
+        return (!ratingText.isNullOrEmpty() || rating != 0)
     }
-
 }

@@ -11,32 +11,35 @@ import androidx.compose.ui.graphics.Color
 private val LightColorPalette = lightColorScheme(
     primary = Color.Transparent,
     onPrimary = Gold90,
-    primaryContainer = Color.Cyan,
+    primaryContainer = Black40,
     onPrimaryContainer = Black10,
     inversePrimary = Gold40,
     secondary = Black20,
     onSecondary = Black20,
-    secondaryContainer = Black40,
+    secondaryContainer = Black20,
     onSecondaryContainer = Color.Yellow,
     tertiary = GoldTrans,
     surface = Black10,
     onSurface = Black10,
-    tertiaryContainer = Black10
-
-
+    tertiaryContainer = Black10,
+    onSurfaceVariant = Black80
 )
+
 private val DarkColorPalette = darkColorScheme(
-    primary = Blue,
-    onPrimary = Red, //
-    primaryContainer = Red, //
-    onPrimaryContainer = Red, //
-    inversePrimary = Red, //
-    secondary = Red,
-    onSecondary = Red, //
-    secondaryContainer = Red, //
-    onSecondaryContainer = Black90, //
-    surface = Black30,
-    onSurface = Black80
+    primary = Color.Transparent,
+    onPrimary = Gold90,
+    primaryContainer = Black40,
+    onPrimaryContainer = Black10,
+    inversePrimary = Gold40,
+    secondary = Black20,
+    onSecondary = Black20,
+    secondaryContainer = Black20,
+    onSecondaryContainer = Color.Yellow,
+    tertiary = GoldTrans,
+    surface = Black10,
+    onSurface = Black10,
+    tertiaryContainer = Black10,
+    onSurfaceVariant = Black80
 )
 
 @Composable

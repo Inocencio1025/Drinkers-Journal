@@ -11,19 +11,17 @@ import okio.IOException
 
 class FavDrinksDataStore private constructor(private val FavDrinksStore: DataStore<ListOfDrinks>) {
 
-
     private val TAG: String = "FavDrinksDataStore"
 
-    val favDrinksFlow: Flow<ListOfDrinks> = FavDrinksStore.data
-        .catch { exception ->
-            // dataStore.data throws an IOException when an error is encountered when reading data
-            if (exception is IOException) {
-                Log.e(TAG, "Error reading sort order preferences.", exception)
-                emit(ListOfDrinks.getDefaultInstance())
-            } else {
-                throw exception
-            }
+    val favDrinksFlow: Flow<ListOfDrinks> = FavDrinksStore.data.catch { exception ->
+        // dataStore.data throws an IOException when an error is encountered when reading data
+        if (exception is IOException) {
+            Log.e(TAG, "Error reading sort order preferences.", exception)
+            emit(ListOfDrinks.getDefaultInstance())
+        } else {
+            throw exception
         }
+    }
 
     suspend fun saveNewDrink(newDrink: String) {
         FavDrinksStore.updateData { drink ->
@@ -68,7 +66,4 @@ class FavDrinksDataStore private constructor(private val FavDrinksStore: DataSto
             }
         }
     }
-
-
-
 }

@@ -12,10 +12,9 @@ val Black90 = Color(0xFFE6E6E6)
 val GoldTrans = Color(255, 215, 0, 50)
 val Gold20 = Color(0xFF665700)
 val Gold30 = Color(0xFF998200)
-val Gold40 = Color(0xFFCCAd00)
+val Gold40 = Color(225,205,0)
 val Gold80 = Color(0xFFFFF099)
 val Gold90 = Color(0xFFFFF7CC)
-
 
 val Blue = Color(0xFF0000A0)
 val Purple = Color(0xFF800080)

@@ -3,15 +3,11 @@ package com.example.drinkersjournal.util
 
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.drinkersjournal.*
-import com.example.drinkersjournal.screens.BrowseDrinksScreen
-import com.example.drinkersjournal.screens.DrinkDetailsScreen
-import com.example.drinkersjournal.screens.HomeScreen
-import com.example.drinkersjournal.screens.RandomDrinkScreen
+import com.example.drinkersjournal.screens.*
 
 @Composable
 fun Navigation() {
@@ -30,9 +26,7 @@ fun Navigation() {
 
         // View a drink at random
         composable(route = Screen.RandomDrinkScreen.route){
-
             RandomDrinkScreen(navController)
-
         }
 
         // View drink details
@@ -49,7 +43,6 @@ fun Navigation() {
         composable(route = Screen.DrinkListByIngredientScreen.route){
             DrinkListByIngredientScreen(navController)
         }
-
     }
 }
 

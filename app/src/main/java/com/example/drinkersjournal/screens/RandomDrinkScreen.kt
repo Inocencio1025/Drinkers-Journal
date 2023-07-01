@@ -7,10 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,16 +22,13 @@ import kotlinx.coroutines.launch
 
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RandomDrinkScreen (navController: NavController) {
     LaunchedEffect(Unit){
-        DrinkersInfo.retrieveRandomDrink()
-
+        isInList.value = DrinkersInfo.retrieveRandomDrink()
     }
-    // Boolean for if currently viewed drink is in favorites list
-    var isInList by remember { mutableStateOf(false) }
-    isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
 
     // For coroutines
     var context = LocalContext.current
@@ -82,30 +76,30 @@ fun RandomDrinkScreen (navController: NavController) {
             FloatingActionButton(
                 onClick = {
                     coroutineScope.launch {
-                        if (!isInList) {
+                        if (!isInList.value) {
                             DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
-                            isInList = !isInList
+                            isInList.value = !isInList.value
                             Toast.makeText(
                                 context,
-                                DrinkersInfo.drinkName.value + " added to list",
+                                DrinkersInfo.drinkName.value + " added to favorites",
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
                             DrinkersInfo.deleteFromList(DrinkersInfo.drinkId.value)
-                            isInList = !isInList
+                            isInList.value = !isInList.value
                             Toast.makeText(
                                 context,
-                                DrinkersInfo.drinkName.value + " removed from list",
+                                DrinkersInfo.drinkName.value + " removed from favorites",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     }
-                    isInList = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
+                    isInList.value = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
                 },
-                contentColor = Color.White,
+                contentColor = Color.Yellow,
                 shape = CircleShape
             ) {
-                if (!isInList) {
+                if (!isInList.value) {
                     Icon(
                         imageVector = Icons.Default.FavoriteBorder,
                         contentDescription = "Add to Favorites"
@@ -129,12 +123,12 @@ fun RandomDrinkScreen (navController: NavController) {
                     BottomNavItem(
                         name = "Browse",
                         route = "browse_drinks_screen",
-                        icon = Icons.Default.List
+                        icon = Icons.Default.Search
                     ),
                     BottomNavItem(
                         name = "Favorites",
                         route = "view_list_screen",
-                        icon = Icons.Default.Favorite
+                        icon = Icons.Default.List
                     )
                 ),
                 navController = navController,

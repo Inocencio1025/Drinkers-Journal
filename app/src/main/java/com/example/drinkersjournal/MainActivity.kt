@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
+import com.example.drinkersjournal.screens.setBrowseScreen
 import com.example.drinkersjournal.ui.theme.DrinkersJournalTheme
 import com.example.drinkersjournal.util.FavDrinkSerializer
 import com.example.drinkersjournal.util.FavDrinksDataStore
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         window.statusBarColor = Color.Black.hashCode()
 
@@ -33,6 +35,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DrinkersJournalTheme{
 
+                setBrowseScreen()
                 LaunchedEffect(Unit) {
                     DrinkersInfo.setDataStore(favDrinksDataStore)
                     DrinkersInfo.setList(favDrinksDataStore.favDrinksFlow)

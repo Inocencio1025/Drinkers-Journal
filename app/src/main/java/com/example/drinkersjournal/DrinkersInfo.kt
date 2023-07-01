@@ -1,6 +1,7 @@
 package com.example.drinkersjournal
 
-
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.runtime.*
 import com.example.drinkersjournal.data.Drink
 import com.example.drinkersjournal.data.DrinkByIngredients
@@ -10,98 +11,32 @@ import com.example.drinkersjournal.util.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
 import retrofit2.Response
 
-
-
-
-
-
-
 object DrinkersInfo {
 
+    // list of favorite drinks saved by user
+    val userFavList = mutableListOf<Drink>()
 
+    // DataStore for saving userFavList for when app closes
+    private lateinit var favDrinksDataStore: FavDrinksDataStore
 
-
-
-
-
-
-
-
-
-
-    val favDrinksList = mutableListOf<Drink>()
+    // list of drinks with a common ingredient fetched by the api
     val drinksByIngredient = mutableListOf<DrinkByIngredients>()
 
+    // specific drink details fetched by the api
     var imageUrlStr = mutableStateOf("")
     var drinkId = mutableStateOf("")
     var drinkName = mutableStateOf("")
-    var rating = mutableStateOf("")
-    var ratingText = mutableStateOf("")
     var instructions = mutableStateOf("")
-    var ingredients: MutableList<String> by mutableStateOf(mutableListOf())
-    var measurements: MutableList<String> by mutableStateOf(mutableListOf())
+    var ingredients = mutableListOf<String> ()
+    var measurements = mutableListOf<String> ()
+    private var rating = mutableStateOf("")
+    private var ratingText = mutableStateOf("")
 
-
-    var currentlyViewedDrinkId = ""
-    var ingredientForDrinkList = ""
-
-    var storedDrinkIDs : Flow<ListOfDrinks> = flow{}
-
-
-/*
-    val exampleCounterFlow: Flow<Int> = context.favListDataStore.data
-        .map {  ->
-            // The exampleCounter property is generated from the proto schema.
-            settings.exampleCounter
-        }
-var favDrinksDataStore: FavDrinksDataStore
-    fun setDataStore(favDrinksDataStore: FavDrinksDataStore){
-        this.favDrinksDataStore = favDrinksDataStore
-    }
- */
-
-
-
-
-
-    fun retrieveDrinksByIngredient(ingredient: String){
-
-        CoroutineScope(Dispatchers.Main).launch {
-
-            val response = try {
-                RetrofitInstance.api.getDrinksByIngredient(ingredient)
-            } catch (e: IOException) {
-                //Log.e(TAG, "IOException, you might not have internet connection")
-                return@launch
-            } catch (e: HttpException) {
-                //Log.e(TAG, "HttpException, unexpected response")
-                return@launch
-            }
-
-            if (response.isSuccessful && response.body() != null) {
-
-                drinksByIngredient.clear()
-
-                response.body()!!.drinks.forEach(){
-                    val drinkByIngredients = DrinkByIngredients(
-                        it.idDrink,
-                        it.strDrink,
-                        it.strDrinkThumb
-                    )
-
-                    drinksByIngredient.add(drinkByIngredients)
-                }
-
-
-            }
-        }
-    }
     // adds drink to user list
     suspend fun addDrinkById(id: String){
         if (!isInList(id)) {
@@ -175,39 +110,60 @@ var favDrinksDataStore: FavDrinksDataStore
                         0,
                         ""
                     )
-
-
-
-
-                    favDrinksList.add(drink)
+                    userFavList.add(drink)
                     favDrinksDataStore.saveNewDrink(drinkId.value)
-
-
                 }
             }
         }
     }
 
-
-    // uses id value stored in currentlyViewedId
-    fun retrieveDrinkInfo(){
+    fun retrieveDrinksByIngredient(ingredient: String){
 
         CoroutineScope(Dispatchers.Main).launch {
 
             val response = try {
-                RetrofitInstance.api.getCocktailById(currentlyViewedDrinkId)
+                RetrofitInstance.api.getDrinksByIngredient(ingredient)
             } catch (e: IOException) {
-                //Log.e(TAG, "IOException, you might not have internet connection")
+                Log.e(TAG, "IOException, you might not have internet connection")
                 return@launch
             } catch (e: HttpException) {
-                //Log.e(TAG, "HttpException, unexpected response")
+                Log.e(TAG, "HttpException, unexpected response")
+                return@launch
+            }
+
+            if (response.isSuccessful && response.body() != null) {
+                drinksByIngredient.clear()
+
+                response.body()!!.drinks.forEach {
+                    val drinkByIngredients = DrinkByIngredients(
+                        it.idDrink,
+                        it.strDrink,
+                        it.strDrinkThumb
+                    )
+                    drinksByIngredient.add(drinkByIngredients)
+                }
+            }
+        }
+    }
+
+    // uses id value stored in drinkId
+    fun retrieveDrinkInfo(): Boolean {
+        CoroutineScope(Dispatchers.Main).launch {
+
+            val response = try {
+                RetrofitInstance.api.getCocktailById(drinkId.value)
+            } catch (e: IOException) {
+                Log.e(TAG, "IOException, you might not have internet connection")
+                return@launch
+            } catch (e: HttpException) {
+                Log.e(TAG, "HttpException, unexpected response")
                 return@launch
             }
 
             if (response.isSuccessful && response.body() != null) {
 
                 //collects id, name and pic
-                drinkId.value = response.body()!!.drinks[0].idDrink.toString()
+                drinkId.value = response.body()!!.drinks[0].idDrink
 
                 drinkName.value = response.body()!!.drinks[0].strDrink.toString()
                 imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
@@ -219,14 +175,12 @@ var favDrinksDataStore: FavDrinksDataStore
                 //collect instructions
                 instructions.value = response.body()!!.drinks[0].strInstructions.toString()
 
-
             }
         }
+        return isInList(drinkId.value)
     }
 
-
-    fun retrieveRandomDrink(){
-
+    fun retrieveRandomDrink(): Boolean {
         CoroutineScope(Dispatchers.Main).launch {
 
             val response = try {
@@ -242,10 +196,10 @@ var favDrinksDataStore: FavDrinksDataStore
             if (response.isSuccessful && response.body() != null) {
 
                 //collects id, name and pic
-                drinkId.value = response.body()!!.drinks[0].idDrink.toString()
+                drinkId.value = response.body()!!.drinks[0].idDrink
                 drinkName.value = response.body()!!.drinks[0].strDrink.toString()
                 imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
-                currentlyViewedDrinkId = drinkId.value
+                //currentlyViewedDrinkId = drinkId.value
 
                 //collects ingredients
                 gatherIngredients(response)
@@ -253,24 +207,18 @@ var favDrinksDataStore: FavDrinksDataStore
 
                 //collect instructions
                 instructions.value = response.body()!!.drinks[0].strInstructions.toString()
-
-
-
             }
         }
+        return isInList(drinkId.value)
     }
 
-
-
-
     suspend fun deleteFromList(drinkId: String){
-        favDrinksList.remove(favDrinksList.find { it.idDrink == drinkId })
+        userFavList.remove(userFavList.find { it.idDrink == drinkId })
         favDrinksDataStore.removeDrink(drinkId)
     }
 
-    //@Composable
     fun isInList(id: String) : Boolean{
-        favDrinksList.forEach {
+        userFavList.forEach {
             if (id == it.idDrink) {
                 return true
             }
@@ -278,8 +226,37 @@ var favDrinksDataStore: FavDrinksDataStore
         return false
     }
 
+    // for getting user favorite drink list from dataStore
+    suspend fun setList(favDrinksFlow: Flow<ListOfDrinks>) {
+        favDrinksFlow.collect{ drink ->
+            val list = drink.drinkIDList
+            list.forEach{
+                addDrinkById(it)
+            }
+        }
+    }
 
+    // not sure if this is the correct way to do this...
+    fun setDataStore(favDrinksDataStore: FavDrinksDataStore) {
+        this.favDrinksDataStore = favDrinksDataStore
+    }
 
+    fun addRatingToDrinkByID(drink: Drink, ratingString: String, ratingNum: Int) {
+        val targetDrink = userFavList.find { it.idDrink == drink.idDrink }
+        if (targetDrink != null) {
+            targetDrink.ratingText = ratingString
+            targetDrink.rating = ratingNum
+        }
+        ratingText.value = ratingString
+        rating.value = ratingNum.toString()
+    }
+
+    suspend fun clearList(){
+        userFavList.clear()
+        favDrinksDataStore.clearListOfDrinks()
+    }
+
+    // used for api calls
     private fun gatherIngredients(response: Response<Drinks>){
         ingredients.clear()
 
@@ -318,7 +295,6 @@ var favDrinksDataStore: FavDrinksDataStore
     private fun gatherMeasurements(response: Response<Drinks>) {
         measurements.clear()
 
-
         if(response.body()!!.drinks[0].strMeasure1 != null)
             measurements.add(response.body()!!.drinks[0].strMeasure1.toString())
         if(response.body()!!.drinks[0].strMeasure2 != null)
@@ -350,40 +326,6 @@ var favDrinksDataStore: FavDrinksDataStore
         if(response.body()!!.drinks[0].strMeasure15 != null)
             measurements.add(response.body()!!.drinks[0].strMeasure15.toString())
     }
-
-
-
-
-    suspend fun setList(favDrinksFlow: Flow<ListOfDrinks>) {
-        favDrinksFlow.collect{ drink ->
-            val list = drink.drinkIDList
-            list.forEach{
-                addDrinkById(it)
-            }
-        }
-    }
-
-    lateinit var favDrinksDataStore: FavDrinksDataStore
-    fun setDataStore(favDrinksDataStore: FavDrinksDataStore) {
-        this.favDrinksDataStore = favDrinksDataStore
-    }
-
-    fun addRatingToDrinkByID(drinkId: String, ratingString: String, ratingNum: Int) {
-        val targetDrink = favDrinksList.find { it.idDrink == drinkId }
-        if (targetDrink != null) {
-            targetDrink.ratingText = ratingString
-            targetDrink.rating = ratingNum
-        }
-        ratingText.value = ratingString
-        rating.value = ratingNum.toString()
-    }
-
-    suspend fun clearList(){
-        favDrinksList.clear()
-        favDrinksDataStore.clearListOfDrinks()
-    }
-
-
 }
 
 
