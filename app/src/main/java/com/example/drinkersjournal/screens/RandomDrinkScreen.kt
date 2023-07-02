@@ -14,18 +14,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.drinkersjournal.*
 import com.example.drinkersjournal.data.BottomNavItem
 import kotlinx.coroutines.launch
 
+private var isInList = mutableStateOf(false)
 
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RandomDrinkScreen (navController: NavController) {
+    isInList.value = false
+
     LaunchedEffect(Unit){
         isInList.value = DrinkersInfo.retrieveRandomDrink()
     }
@@ -37,19 +41,34 @@ fun RandomDrinkScreen (navController: NavController) {
 
 
     Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Random Drink",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(Icons.Filled.ArrowBack, "backIcon")
+                    }
+                },
+            )
+        },
         content = { paddingValues ->
             SetBackgroundImage()
-            Spacer(modifier = Modifier.height(20.dp))
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 5.dp, bottom = paddingValues.calculateBottomPadding())
+                    .padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally)
             {
-
                 // drink image
                 CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
 
@@ -94,7 +113,6 @@ fun RandomDrinkScreen (navController: NavController) {
                             ).show()
                         }
                     }
-                    isInList.value = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
                 },
                 contentColor = Color.Yellow,
                 shape = CircleShape
@@ -142,24 +160,4 @@ fun RandomDrinkScreen (navController: NavController) {
 
 
 
-/*
-// buttons: randomize drink, save drink
-@Composable
-private fun CreateButtons() {
 
-
-    Box {
-        // random drink button
-        Button(
-            onClick = {
-                DrinkersInfo.retrieveRandomDrink()
-
-                      },
-            modifier = Modifier.padding(horizontal = 5.dp)
-        ) {
-            Text(text = "Randomize Drink")
-        }
-    }
-}
-
- */

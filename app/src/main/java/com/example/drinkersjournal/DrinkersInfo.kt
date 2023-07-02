@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import com.example.drinkersjournal.data.Drink
 import com.example.drinkersjournal.data.DrinkByIngredients
 import com.example.drinkersjournal.data.Drinks
+import com.example.drinkersjournal.screens.drinksByIngredient
 import com.example.drinkersjournal.util.FavDrinksDataStore
 import com.example.drinkersjournal.util.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
@@ -24,8 +25,9 @@ object DrinkersInfo {
     // DataStore for saving userFavList for when app closes
     private lateinit var favDrinksDataStore: FavDrinksDataStore
 
-    // list of drinks with a common ingredient fetched by the api
-    val drinksByIngredient = mutableListOf<DrinkByIngredients>()
+
+
+
 
     // specific drink details fetched by the api
     var imageUrlStr = mutableStateOf("")
@@ -36,6 +38,16 @@ object DrinkersInfo {
     var measurements = mutableListOf<String> ()
     private var rating = mutableStateOf("")
     private var ratingText = mutableStateOf("")
+
+    //this string is specifically for the topAppBar to read ingredient name
+    //probably a better way to do this but I jjust wanna be done with this project
+    var ingredientAppBarTextHolder = ""
+
+    fun setIngredientForSearch(ingredient :String){
+        drinksByIngredient.clear()
+        retrieveDrinksByIngredient(ingredient)
+        ingredientAppBarTextHolder = ingredient
+    }
 
     // adds drink to user list
     suspend fun addDrinkById(id: String){
@@ -117,8 +129,7 @@ object DrinkersInfo {
         }
     }
 
-    fun retrieveDrinksByIngredient(ingredient: String){
-
+    private fun retrieveDrinksByIngredient(ingredient: String){
         CoroutineScope(Dispatchers.Main).launch {
 
             val response = try {
@@ -132,7 +143,6 @@ object DrinkersInfo {
             }
 
             if (response.isSuccessful && response.body() != null) {
-                drinksByIngredient.clear()
 
                 response.body()!!.drinks.forEach {
                     val drinkByIngredients = DrinkByIngredients(
@@ -141,7 +151,12 @@ object DrinkersInfo {
                         it.strDrinkThumb
                     )
                     drinksByIngredient.add(drinkByIngredients)
+                    Log.e("LOOK", ":)")
+
                 }
+            }
+            else {
+                Log.e("LOOK", ":(")
             }
         }
     }

@@ -17,7 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.layoutId
@@ -35,7 +37,7 @@ var intRating = mutableStateOf(0)
 var hasRating = mutableStateOf(false)
 var isRating = mutableStateOf(false)
 var isDoneRating = mutableStateOf(true)
-var isInList = mutableStateOf(false)
+private var isInList = mutableStateOf(false)
 
 
 
@@ -77,6 +79,23 @@ private fun SetContent(navController: NavController) {
 
 
     Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Drink Details",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(Icons.Filled.ArrowBack, "backIcon")
+                    }
+                },
+            )
+        },
         content = { paddingValues ->
             SetBackgroundImage()
             Spacer(modifier = Modifier.height(20.dp))
@@ -84,7 +103,7 @@ private fun SetContent(navController: NavController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 5.dp, bottom = paddingValues.calculateBottomPadding())
+                    .padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally)
@@ -144,7 +163,6 @@ private fun SetContent(navController: NavController) {
                             ).show()
                         }
                     }
-                    isInList.value = DrinkersInfo.isInList(DrinkersInfo.drinkId.value)
                 },
                 contentColor = Color.Yellow,
                 shape = CircleShape
@@ -227,12 +245,22 @@ fun CreateDrinkImage(img: String) {
 
 @Composable
 fun CreateNameText(nameStr: String){
+    var resizedFont by remember {
+        mutableStateOf(50.sp)
+    }
+
     Text(
         text = nameStr,
         color = Color.White,
-        fontSize = 40.sp,
+        fontSize = resizedFont,
         modifier = Modifier.layoutId("drinkName"),
-        fontFamily = drinkNameFont
+        fontFamily = drinkNameFont,
+        softWrap = false,
+        onTextLayout = { result ->
+            if(result.didOverflowWidth) {
+                resizedFont *= 0.95
+            }
+        }
     )
     Spacer(modifier = Modifier.height(10.dp))
 }
@@ -380,4 +408,4 @@ fun CreateInstructionText(instrStr: String){
 }
 
 @Composable
-fun CreateBottomSpace(){ Spacer(modifier = Modifier.height(200.dp)) }
+fun CreateBottomSpace(){ Spacer(modifier = Modifier.height(50.dp)) }

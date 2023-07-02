@@ -20,7 +20,7 @@ private val LightColorPalette = lightColorScheme(
     onSecondaryContainer = Color.Yellow,
     tertiary = GoldTrans,
     surface = Black10,
-    onSurface = Black10,
+    onSurface = Color.White,
     tertiaryContainer = Black10,
     onSurfaceVariant = Black80
 )
