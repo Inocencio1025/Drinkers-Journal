@@ -3,7 +3,7 @@ buildscript {
         compose_ui_version = '1.1.1'
     }
     repositories {
-        //google()
+        google()
         //mavenCentral()
     }
     dependencies {

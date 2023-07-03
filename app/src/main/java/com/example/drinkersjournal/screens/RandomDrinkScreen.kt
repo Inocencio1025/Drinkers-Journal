@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.drinkersjournal.*
 import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.ui.theme.topBarFont
 import kotlinx.coroutines.launch
 
 private var isInList = mutableStateOf(false)
@@ -47,7 +48,8 @@ fun RandomDrinkScreen (navController: NavController) {
                     Text(
                         text = "Random Drink",
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis)
+                        overflow = TextOverflow.Ellipsis,
+                        fontFamily = topBarFont)
                 },
                 navigationIcon = {
                     IconButton(onClick = {

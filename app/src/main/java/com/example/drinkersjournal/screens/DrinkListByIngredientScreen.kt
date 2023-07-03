@@ -20,6 +20,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.DrinkByIngredients
+import com.example.drinkersjournal.ui.theme.topBarFont
 import com.example.drinkersjournal.util.Screen
 
 // list of drinks with a common ingredient fetched by the api
@@ -36,7 +37,8 @@ fun DrinkListByIngredientScreen (navController: NavController){
                     Text(
                         text = DrinkersInfo.ingredientAppBarTextHolder,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        fontFamily = topBarFont
                     )
                 },
                 navigationIcon = {

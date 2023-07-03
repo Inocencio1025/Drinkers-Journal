@@ -232,7 +232,7 @@ object DrinkersInfo {
         favDrinksDataStore.removeDrink(drinkId)
     }
 
-    fun isInList(id: String) : Boolean{
+    private fun isInList(id: String) : Boolean{
         userFavList.forEach {
             if (id == it.idDrink) {
                 return true

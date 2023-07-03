@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import com.example.drinkersjournal.screens.setBrowseList
@@ -28,6 +30,7 @@ class MainActivity : ComponentActivity() {
         window.statusBarColor = Color.Black.hashCode()
 
         super.onCreate(savedInstanceState)
+        //setTheme(R.style.Theme_DrinkersJournal)
         setContent {
             DrinkersJournalTheme{
 

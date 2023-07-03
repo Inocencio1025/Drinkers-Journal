@@ -15,6 +15,10 @@ val drinkNameFont = FontFamily(
 val drinkRatingTextFont = FontFamily(
     Font(R.font.bacasime_antique_regular)
 )
+val topBarFont = FontFamily(
+    Font(R.font.rajdhani_medium)
+)
+
 
 // Material 3
 val Typography = Typography(

@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -30,6 +29,7 @@ import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.BottomNavItem
 import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
+import com.example.drinkersjournal.ui.theme.topBarFont
 import kotlinx.coroutines.launch
 
 var stringRating = mutableStateOf("")
@@ -62,7 +62,7 @@ private fun SetContent(navController: NavController) {
 
 
     if(isInList.value) {
-        var currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DrinkersInfo.drinkId.value }
+        val currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DrinkersInfo.drinkId.value }
         if (currentDrink != null) {
             stringRating.value = currentDrink.ratingText.toString()
             intRating.value = currentDrink.rating
@@ -85,7 +85,9 @@ private fun SetContent(navController: NavController) {
                     Text(
                         text = "Drink Details",
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis)
+                        overflow = TextOverflow.Ellipsis,
+                        fontFamily = topBarFont
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -225,7 +227,7 @@ fun CreateDrinkImage(img: String) {
     }
 
     Box(modifier = Modifier.padding(24.dp)){
-        AnimatedVisibility(visibleState = state, ) {
+        AnimatedVisibility(visibleState = state) {
             GlideImage(
                 model = img,
                 contentDescription = "",
@@ -358,10 +360,7 @@ private fun CreateRateButton() {
                 intRating.value = currentDrink.rating
                 hasRating.value = currentDrink.hasRating()
             }
-            if (currentDrink != null) {
 
-
-            }
         }
     ) {
         if(isRating.value){
@@ -403,7 +402,8 @@ fun CreateInstructionText(instrStr: String){
         text = instrStr,
         color = Color.White,
         fontSize = 24.sp,
-        modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp )
+        modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp ),
+        fontFamily = topBarFont
     )
 }
 
