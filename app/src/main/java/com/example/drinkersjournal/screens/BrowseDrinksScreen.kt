@@ -261,7 +261,7 @@ fun setBrowseList() {
     nonAlcoholicList.add(Ingredient("Ginger Beer", "https://www.thecocktaildb.com/images/ingredients/Ginger%20Beer-Medium.png"))
     nonAlcoholicList.add(Ingredient("Orange Juice", "https://www.thecocktaildb.com/images/ingredients/Orange%20juice-Medium.png"))
     nonAlcoholicList.add(Ingredient("Cranberry Juice", "https://www.thecocktaildb.com/images/ingredients/Cranberry%20juice-Medium.png"))
-    nonAlcoholicList.add(Ingredient("Pineapple Juice", "https://www.thecocktaildb.com/images/ingredients/Cranberry%20juice-Medium.png"))
+    nonAlcoholicList.add(Ingredient("Pineapple Juice", "https://www.thecocktaildb.com/images/ingredients/Pineapple%20juice-Medium.png"))
     nonAlcoholicList.add(Ingredient("Grenadine", "https://www.thecocktaildb.com/images/ingredients/grenadine-Medium.png"))
     nonAlcoholicList.add(Ingredient("Blue Curacao", "https://www.thecocktaildb.com/images/ingredients/Blue%20curacao-Medium.png"))
     nonAlcoholicList.add(Ingredient("Lime Juice", "https://www.thecocktaildb.com/images/ingredients/Lime%20Juice-Medium.png"))

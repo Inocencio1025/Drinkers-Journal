@@ -20,6 +20,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.DrinkByIngredients
+import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.topBarFont
 import com.example.drinkersjournal.util.Screen
 
@@ -79,22 +80,17 @@ fun DrinkListByIngredientScreen (navController: NavController){
                                     .fillMaxHeight(1f)
                             )
 
-                            var resizedFont by remember {
-                                mutableStateOf(24.sp)
-                            }
+
                             // drink name
                             Text(
                                 text = drink.strDrink,
                                 textAlign = TextAlign.Left,
                                 color = Color.White,
-                                fontSize = resizedFont,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = 28.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                fontFamily = drinkNameFont,
                                 modifier = Modifier.padding(5.dp),
-                                onTextLayout = { result ->
-                                    if(result.didOverflowWidth) {
-                                        resizedFont *= 0.95
-                                    }
-                                }
+
                             )
                         }
                     }

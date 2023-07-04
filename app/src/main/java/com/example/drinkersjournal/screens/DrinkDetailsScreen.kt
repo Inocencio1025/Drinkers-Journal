@@ -1,12 +1,15 @@
 package com.example.drinkersjournal.screens
 
+import android.icu.text.AlphabeticIndex.Bucket.LabelType
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,8 +18,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -105,7 +110,10 @@ private fun SetContent(navController: NavController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding()
+                    )
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally)
@@ -277,12 +285,13 @@ fun CreateRating() {
         visible= stringRating.value != "" && !isRating.value,
         enter = slideInVertically () + expandVertically() + fadeIn(),
         exit = slideOutVertically () + shrinkVertically() + fadeOut()
-
-        ){
-            Text(text = "\"" + stringRating.value + "\"",
-                color = Color.Green,
-                fontSize = 24.sp,
-                fontFamily = drinkRatingTextFont)
+    ){
+        Text(text = "\"" + stringRating.value + "\"",
+            color = Color.Green,
+            fontSize = 24.sp,
+            fontFamily = drinkRatingTextFont,
+            textAlign = TextAlign.Center
+        )
     }
 
     //Displaying the stars
@@ -296,17 +305,28 @@ fun CreateRating() {
         )
     }
 
-
     //TextBox
     AnimatedVisibility(visible = isRating.value){
         TextField(
             value = stringRating.value,
             onValueChange = { newText ->
                 stringRating.value = newText
-            }
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color.Black,
+                containerColor = MaterialTheme.colorScheme.inversePrimary,
+                focusedLabelColor = Color.Transparent,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary,
+                cursorColor = Color.Black
+
+            ),
+            modifier = Modifier,
+            label = { Text(text = "Rate Here")},
+            shape = RoundedCornerShape(8.dp)
         )
     }
 }
+
 
 @Composable
 fun CreateRatingStars(
@@ -314,8 +334,6 @@ fun CreateRatingStars(
     currentRating: Int,
     onRatingChanged: (Int) -> Unit
 ) {
-
-
     Row(Modifier.padding(8.dp)) {
         for (i in 1..maxRating) {
             val isFilled = i <= currentRating
@@ -344,15 +362,28 @@ fun CreateRatingStars(
 
 @Composable
 private fun CreateRateButton() {
-    val currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DrinkersInfo.drinkId.value }
-    Button(
-        modifier = Modifier.padding(vertical = 10.dp),
-        onClick = {
-            isRating.value = !isRating.value
-            isDoneRating.value = !isDoneRating.value
+    val currentDrink = DrinkersInfo.currentDrink
+    val colors = listOf(Color.Transparent, MaterialTheme.colorScheme.tertiary, Color.Transparent)
+    val gradient = Brush.horizontalGradient(colors = colors)
 
+    val borderColors = listOf(Color.Transparent, MaterialTheme.colorScheme.onPrimary, Color.Transparent)
+    val borderGradient = Brush.horizontalGradient(colors = borderColors)
 
-            if (currentDrink != null) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .width(128.dp)
+            .height(64.dp)
+    ) {
+        Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier.background(borderGradient))
+
+        Button(
+            modifier = Modifier
+                .background(gradient),
+            onClick = {
+                isRating.value = !isRating.value
+                isDoneRating.value = !isDoneRating.value
+
                 DrinkersInfo.addRatingToDrinkByID(currentDrink, stringRating.value, intRating.value)
 
                 //set flags
@@ -360,17 +391,20 @@ private fun CreateRateButton() {
                 intRating.value = currentDrink.rating
                 hasRating.value = currentDrink.hasRating()
             }
-
-        }
-    ) {
-        if(isRating.value){
+        ) {
+            if(isRating.value){
                 Text(text = "Save Rating")
+            }
+            else if (currentDrink.hasRating())
+                Text(text = "Edit Rating")
+            else
+                Text(text = "Add Rating")
         }
-        else if (currentDrink != null && currentDrink.hasRating())
-            Text(text = "Edit Rating")
-        else
-            Text(text = "Add Rating")
+        Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier
+            .background(borderGradient))
+
     }
+
 }
 
 

@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,6 +25,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
 import com.example.drinkersjournal.ui.theme.topBarFont
 import com.example.drinkersjournal.util.Screen
@@ -37,20 +39,6 @@ import kotlinx.coroutines.launch
 fun FavoriteDrinksScreen(navController: NavController){
     val listSize by remember { mutableStateOf(DrinkersInfo.userFavList.size) }
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        DrinkersInfo.clearList()
-                    }
-                },
-
-                shape = RectangleShape,
-                modifier = Modifier.background(Color.Red)
-            ) {
-                Text(text = listSize.toString())
-            }
-        },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -70,7 +58,19 @@ fun FavoriteDrinksScreen(navController: NavController){
                 },
             )
         },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        DrinkersInfo.clearList()
+                    }
+                },
 
+                shape = RectangleShape,
+            ) {
+                Text(text = listSize.toString())
+            }
+        },
         bottomBar = {
             BottomNavigationBar(
                 items = listOf(
@@ -103,7 +103,7 @@ fun FavoriteDrinksScreen(navController: NavController){
         if (listSize == 0){
             CreateEmptyListText()
         } else{
-            Box() {
+            Box {
                 LazyColumn(
                     modifier = Modifier.padding(
                         top = paddingValues.calculateTopPadding(),
@@ -161,37 +161,70 @@ fun CreateDrinkInList(drink: Drink) {
             text = drink.strDrink.toString(),
             textAlign = TextAlign.Left,
             color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 28.sp,
+            overflow = TextOverflow.Ellipsis,
+            fontFamily = drinkNameFont,
             modifier = Modifier
             //.background(color = Color.Red)
         )
         // drink rating text
-        Text(
-            text = drink.ratingText.toString(),
-            textAlign = TextAlign.Left,
-            fontFamily = drinkRatingTextFont,
-            color = Color.White,
-            fontSize = 16.sp,
-            modifier = Modifier
-                //.background(color = Color.Green)
-                .padding(horizontal = 10.dp, vertical = 8.dp)
-                .fillMaxSize()
-        )
+        if (!drink.ratingText.isNullOrEmpty()){
+            Text(
+                text = "\"" + drink.ratingText.toString() + "\"",
+                textAlign = TextAlign.Left,
+                fontFamily = drinkRatingTextFont,
+                color = Color.Green,
+                fontSize = 16.sp,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    //.background(color = Color.Green)
+                    .padding(horizontal = 10.dp, vertical = 8.dp)
+                    .fillMaxSize()
+            )
+        }
     }
-    // drink rating
-    Text(
-        text = drink.rating.toString(),
-        textAlign = TextAlign.Justify,
-        color = Color.White,
-        fontSize = 40.sp,
-        modifier = Modifier
-            .fillMaxWidth()
-    )
+    if (drink.rating != 0){
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            var resizedFont by remember {
+                mutableStateOf(12.sp)
+            }
+            Text(
+                text = "RATING",
+                textAlign = TextAlign.Center,
+                color = Color.Yellow,
+                fontSize = resizedFont,
+                fontFamily = drinkNameFont,
+                fontWeight = FontWeight.Bold,
+                softWrap = false,
+                onTextLayout = { result ->
+                    if(result.didOverflowWidth) {
+                        resizedFont *= 0.95
+                    }
+                },
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            // drink rating
+            Text(
+                text = drink.rating.toString(),
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                fontSize = 40.sp,
+                modifier = Modifier
+                    .fillMaxWidth(),
+            )
+        }
+    }
+
+
 }
 
 
-
+// displays only if list is empty
 @Composable
 fun CreateEmptyListText() {
     Box(

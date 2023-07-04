@@ -62,7 +62,9 @@ data class Drink(
     var rating: Int = 0,
     var ratingText: String?
 ) {
+
     fun hasRating(): Boolean {
         return (!ratingText.isNullOrEmpty() || rating != 0)
     }
+
 }

@@ -29,6 +29,8 @@ object DrinkersInfo {
 
 
 
+    var currentDrink = Drink("","","","","","","","","", "","","","","","","", "","","","","","","", "","","","","", "","","","","","","","", "","","","","","","","","","","", "","","","", 0, "")
+
     // specific drink details fetched by the api
     var imageUrlStr = mutableStateOf("")
     var drinkId = mutableStateOf("")
@@ -124,6 +126,7 @@ object DrinkersInfo {
                     )
                     userFavList.add(drink)
                     favDrinksDataStore.saveNewDrink(drinkId.value)
+                    currentDrink = drink
                 }
             }
         }
@@ -257,11 +260,9 @@ object DrinkersInfo {
     }
 
     fun addRatingToDrinkByID(drink: Drink, ratingString: String, ratingNum: Int) {
-        val targetDrink = userFavList.find { it.idDrink == drink.idDrink }
-        if (targetDrink != null) {
-            targetDrink.ratingText = ratingString
-            targetDrink.rating = ratingNum
-        }
+        drink.ratingText = ratingString
+        drink.rating = ratingNum
+
         ratingText.value = ratingString
         rating.value = ratingNum.toString()
     }
