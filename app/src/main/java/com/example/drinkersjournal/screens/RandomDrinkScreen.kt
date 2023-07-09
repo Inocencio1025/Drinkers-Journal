@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.drinkersjournal.*
 import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.data.DisplayDrink
 import com.example.drinkersjournal.ui.theme.topBarFont
 import kotlinx.coroutines.launch
 
@@ -72,16 +73,16 @@ fun RandomDrinkScreen (navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally)
             {
                 // drink image
-                CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
+                CreateDrinkImage(DisplayDrink.imageUrlStr.value)
 
                 // drink name
-                CreateNameText(nameStr = DrinkersInfo.drinkName.value)
+                CreateNameText(nameStr = DisplayDrink.drinkName.value)
 
                 // display ingredients text, with some conditionals
                 var i = 0
-                DrinkersInfo.ingredients.forEach {
-                    if (DrinkersInfo.measurements.getOrNull(i) != null)
-                        CreateIngredientText(ingStr = DrinkersInfo.measurements[i] + " " + it)
+                DisplayDrink.ingredients.forEach {
+                    if (DisplayDrink.measurements.getOrNull(i) != null)
+                        CreateIngredientText(ingStr = DisplayDrink.measurements[i] + " " + it)
                     else {
                         CreateIngredientText(ingStr = it)
                     }
@@ -89,7 +90,7 @@ fun RandomDrinkScreen (navController: NavController) {
                 }
 
                 // display instructions
-                CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
+                CreateInstructionText(instrStr = DisplayDrink.instructions.value)
                 CreateBottomSpace()
             }
         },
@@ -98,19 +99,19 @@ fun RandomDrinkScreen (navController: NavController) {
                 onClick = {
                     coroutineScope.launch {
                         if (!isInList.value) {
-                            DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
+                            DrinkersInfo.addDrinkById(id = DisplayDrink.drinkId.value,"","0")
                             isInList.value = !isInList.value
                             Toast.makeText(
                                 context,
-                                DrinkersInfo.drinkName.value + " added to favorites",
+                                DisplayDrink.drinkName.value + " added to favorites",
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
-                            DrinkersInfo.deleteFromList(DrinkersInfo.drinkId.value)
+                            DrinkersInfo.deleteFromList(DisplayDrink.drinkId.value)
                             isInList.value = !isInList.value
                             Toast.makeText(
                                 context,
-                                DrinkersInfo.drinkName.value + " removed from favorites",
+                                DisplayDrink.drinkName.value + " removed from favorites",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

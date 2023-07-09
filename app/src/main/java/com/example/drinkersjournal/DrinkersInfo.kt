@@ -2,7 +2,7 @@ package com.example.drinkersjournal
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.runtime.*
+import com.example.drinkersjournal.data.DisplayDrink
 import com.example.drinkersjournal.data.Drink
 import com.example.drinkersjournal.data.DrinkByIngredients
 import com.example.drinkersjournal.data.Drinks
@@ -12,6 +12,7 @@ import com.example.drinkersjournal.util.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
@@ -20,7 +21,7 @@ import retrofit2.Response
 object DrinkersInfo {
 
     // list of favorite drinks saved by user
-    val userFavList = mutableListOf<Drink>()
+    val userFavList : MutableList<Drink> = mutableListOf()
 
     // DataStore for saving userFavList for when app closes
     private lateinit var favDrinksDataStore: FavDrinksDataStore
@@ -29,21 +30,13 @@ object DrinkersInfo {
 
 
 
-    var currentDrink = Drink("","","","","","","","","", "","","","","","","", "","","","","","","", "","","","","", "","","","","","","","", "","","","","","","","","","","", "","","","", 0, "")
 
-    // specific drink details fetched by the api
-    var imageUrlStr = mutableStateOf("")
-    var drinkId = mutableStateOf("")
-    var drinkName = mutableStateOf("")
-    var instructions = mutableStateOf("")
-    var ingredients = mutableListOf<String> ()
-    var measurements = mutableListOf<String> ()
-    private var rating = mutableStateOf("")
-    private var ratingText = mutableStateOf("")
+
 
     //this string is specifically for the topAppBar to read ingredient name
-    //probably a better way to do this but I jjust wanna be done with this project
+    //probably a better way to do this but I just wanna be done with this project
     var ingredientAppBarTextHolder = ""
+
 
     fun setIngredientForSearch(ingredient :String){
         drinksByIngredient.clear()
@@ -52,7 +45,7 @@ object DrinkersInfo {
     }
 
     // adds drink to user list
-    suspend fun addDrinkById(id: String){
+    suspend fun addDrinkById(id: String, rating: String, ratingNum: String, ){
         if (!isInList(id)) {
             CoroutineScope(Dispatchers.Main).launch {
 
@@ -121,12 +114,12 @@ object DrinkersInfo {
                         response.body()!!.drinks[0].strImageAttribution,
                         response.body()!!.drinks[0].strCreativeCommonsConfirmed,
                         response.body()!!.drinks[0].dateModified,
-                        0,
-                        ""
+                        ratingNum,
+                        rating
                     )
                     userFavList.add(drink)
-                    favDrinksDataStore.saveNewDrink(drinkId.value)
-                    currentDrink = drink
+                    val newProtoDrink = ProtoDrink.newBuilder().setID(id).setRating(rating).setRatingNum(ratingNum)
+                    favDrinksDataStore.saveNewDrink(newProtoDrink)
                 }
             }
         }
@@ -169,7 +162,7 @@ object DrinkersInfo {
         CoroutineScope(Dispatchers.Main).launch {
 
             val response = try {
-                RetrofitInstance.api.getCocktailById(drinkId.value)
+                RetrofitInstance.api.getCocktailById(DisplayDrink.drinkId.value)
             } catch (e: IOException) {
                 Log.e(TAG, "IOException, you might not have internet connection")
                 return@launch
@@ -181,21 +174,22 @@ object DrinkersInfo {
             if (response.isSuccessful && response.body() != null) {
 
                 //collects id, name and pic
-                drinkId.value = response.body()!!.drinks[0].idDrink
+                DisplayDrink.drinkId.value = response.body()!!.drinks[0].idDrink
 
-                drinkName.value = response.body()!!.drinks[0].strDrink.toString()
-                imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
+                DisplayDrink.drinkName.value = response.body()!!.drinks[0].strDrink.toString()
+                DisplayDrink.imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
 
                 //collects ingredients
                 gatherIngredients(response)
                 gatherMeasurements(response)
 
                 //collect instructions
-                instructions.value = response.body()!!.drinks[0].strInstructions.toString()
+                DisplayDrink.instructions.value = response.body()!!.drinks[0].strInstructions.toString()
 
             }
         }
-        return isInList(drinkId.value)
+
+        return isInList(DisplayDrink.drinkId.value)
     }
 
     fun retrieveRandomDrink(): Boolean {
@@ -214,9 +208,9 @@ object DrinkersInfo {
             if (response.isSuccessful && response.body() != null) {
 
                 //collects id, name and pic
-                drinkId.value = response.body()!!.drinks[0].idDrink
-                drinkName.value = response.body()!!.drinks[0].strDrink.toString()
-                imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
+                DisplayDrink.drinkId.value = response.body()!!.drinks[0].idDrink
+                DisplayDrink.drinkName.value = response.body()!!.drinks[0].strDrink.toString()
+                DisplayDrink.imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
                 //currentlyViewedDrinkId = drinkId.value
 
                 //collects ingredients
@@ -224,10 +218,10 @@ object DrinkersInfo {
                 gatherMeasurements(response)
 
                 //collect instructions
-                instructions.value = response.body()!!.drinks[0].strInstructions.toString()
+                DisplayDrink.instructions.value = response.body()!!.drinks[0].strInstructions.toString()
             }
         }
-        return isInList(drinkId.value)
+        return isInList(DisplayDrink.drinkId.value)
     }
 
     suspend fun deleteFromList(drinkId: String){
@@ -246,10 +240,13 @@ object DrinkersInfo {
 
     // for getting user favorite drink list from dataStore
     suspend fun setList(favDrinksFlow: Flow<ListOfDrinks>) {
+
         favDrinksFlow.collect{ drink ->
-            val list = drink.drinkIDList
+            val list = drink.protoDrinkList
             list.forEach{
-                addDrinkById(it)
+                addDrinkById(it.id,  it.rating, it.ratingNum)
+
+                Log.e("LOOK", it.id + " -------- " + it.ratingNum)
             }
         }
     }
@@ -259,12 +256,23 @@ object DrinkersInfo {
         this.favDrinksDataStore = favDrinksDataStore
     }
 
-    fun addRatingToDrinkByID(drink: Drink, ratingString: String, ratingNum: Int) {
-        drink.ratingText = ratingString
-        drink.rating = ratingNum
+    suspend fun addRatingToDrinkByID(drinkID: String, ratingString: String, ratingNum: Int) {
+        val editedDrink = userFavList.find { DisplayDrink.drinkId.value == it.idDrink }
+        if (editedDrink != null) {
+            editedDrink.ratingText = ratingString
+            editedDrink.rating = ratingNum.toString()
+        }
 
-        ratingText.value = ratingString
-        rating.value = ratingNum.toString()
+        DisplayDrink.ratingText.value = ratingString
+        DisplayDrink.rating.value = ratingNum.toString()
+
+        favDrinksDataStore.removeDrink(drinkID)
+
+        val newProtoDrink = ProtoDrink.newBuilder()
+            .setID(drinkID)
+            .setRating(ratingString)
+            .setRatingNum(ratingNum.toString())
+        favDrinksDataStore.saveNewDrink(newProtoDrink)
     }
 
     suspend fun clearList(){
@@ -274,73 +282,73 @@ object DrinkersInfo {
 
     // used for api calls
     private fun gatherIngredients(response: Response<Drinks>){
-        ingredients.clear()
+        DisplayDrink.ingredients.clear()
 
         if(response.body()!!.drinks[0].strIngredient1 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient1.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient1.toString())
         if(response.body()!!.drinks[0].strIngredient2 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient2.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient2.toString())
         if(response.body()!!.drinks[0].strIngredient3 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient3.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient3.toString())
         if(response.body()!!.drinks[0].strIngredient4 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient4.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient4.toString())
         if(response.body()!!.drinks[0].strIngredient5 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient5.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient5.toString())
         if(response.body()!!.drinks[0].strIngredient6 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient6.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient6.toString())
         if(response.body()!!.drinks[0].strIngredient7 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient7.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient7.toString())
         if(response.body()!!.drinks[0].strIngredient8 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient8.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient8.toString())
         if(response.body()!!.drinks[0].strIngredient9 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient9.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient9.toString())
         if(response.body()!!.drinks[0].strIngredient10 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient10.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient10.toString())
         if(response.body()!!.drinks[0].strIngredient11 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient11.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient11.toString())
         if(response.body()!!.drinks[0].strIngredient12 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient12.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient12.toString())
         if(response.body()!!.drinks[0].strIngredient13 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient13.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient13.toString())
         if(response.body()!!.drinks[0].strIngredient14 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient14.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient14.toString())
         if(response.body()!!.drinks[0].strIngredient15 != null)
-            ingredients.add(response.body()!!.drinks[0].strIngredient15.toString())
+            DisplayDrink.ingredients.add(response.body()!!.drinks[0].strIngredient15.toString())
     }
 
     private fun gatherMeasurements(response: Response<Drinks>) {
-        measurements.clear()
+        DisplayDrink.measurements.clear()
 
         if(response.body()!!.drinks[0].strMeasure1 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure1.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure1.toString())
         if(response.body()!!.drinks[0].strMeasure2 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure2.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure2.toString())
         if(response.body()!!.drinks[0].strMeasure3 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure3.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure3.toString())
         if(response.body()!!.drinks[0].strMeasure4 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure4.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure4.toString())
         if(response.body()!!.drinks[0].strMeasure5 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure5.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure5.toString())
         if(response.body()!!.drinks[0].strMeasure6 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure6.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure6.toString())
         if(response.body()!!.drinks[0].strMeasure7 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure7.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure7.toString())
         if(response.body()!!.drinks[0].strMeasure8 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure8.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure8.toString())
         if(response.body()!!.drinks[0].strMeasure9 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure9.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure9.toString())
         if(response.body()!!.drinks[0].strMeasure10 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure10.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure10.toString())
         if(response.body()!!.drinks[0].strMeasure11 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure11.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure11.toString())
         if(response.body()!!.drinks[0].strMeasure12 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure12.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure12.toString())
         if(response.body()!!.drinks[0].strMeasure13 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure13.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure13.toString())
         if(response.body()!!.drinks[0].strMeasure14 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure14.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure14.toString())
         if(response.body()!!.drinks[0].strMeasure15 != null)
-            measurements.add(response.body()!!.drinks[0].strMeasure15.toString())
+            DisplayDrink.measurements.add(response.body()!!.drinks[0].strMeasure15.toString())
     }
 }
 

@@ -59,12 +59,12 @@ data class Drink(
     val strCreativeCommonsConfirmed: String?,
     val dateModified: String?,
 
-    var rating: Int = 0,
+    var rating: String = "0",
     var ratingText: String?
 ) {
 
     fun hasRating(): Boolean {
-        return (!ratingText.isNullOrEmpty() || rating != 0)
+        return (!ratingText.isNullOrEmpty() || rating != "0")
     }
 
 }

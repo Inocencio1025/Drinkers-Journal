@@ -18,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +33,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.data.DisplayDrink
 import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
 import com.example.drinkersjournal.ui.theme.topBarFont
@@ -67,10 +69,10 @@ private fun SetContent(navController: NavController) {
 
 
     if(isInList.value) {
-        val currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DrinkersInfo.drinkId.value }
+        val currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DisplayDrink.drinkId.value }
         if (currentDrink != null) {
             stringRating.value = currentDrink.ratingText.toString()
-            intRating.value = currentDrink.rating
+            intRating.value = currentDrink.rating.toInt()
         }
     }
 
@@ -80,7 +82,7 @@ private fun SetContent(navController: NavController) {
     // For coroutines
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
+    val focusRequester = remember { FocusRequester() }
 
 
     Scaffold(
@@ -120,10 +122,10 @@ private fun SetContent(navController: NavController) {
             {
 
                 // drink image
-                CreateDrinkImage(DrinkersInfo.imageUrlStr.value)
+                CreateDrinkImage(DisplayDrink.imageUrlStr.value)
 
                 // drink name
-                CreateNameText(nameStr = DrinkersInfo.drinkName.value)
+                CreateNameText(nameStr = DisplayDrink.drinkName.value)
 
                 //Displays Rating
                 CreateRating()
@@ -137,9 +139,9 @@ private fun SetContent(navController: NavController) {
 
                 // Displays ingredients
                 var i = 0
-                DrinkersInfo.ingredients.forEach {
-                    if (DrinkersInfo.measurements.getOrNull(i) != null)
-                        CreateIngredientText(ingStr = DrinkersInfo.measurements[i] + " " + it)
+                DisplayDrink.ingredients.forEach {
+                    if (DisplayDrink.measurements.getOrNull(i) != null)
+                        CreateIngredientText(ingStr = DisplayDrink.measurements[i] + " " + it)
                     else {
                         CreateIngredientText(ingStr = it)
                     }
@@ -147,28 +149,29 @@ private fun SetContent(navController: NavController) {
                 }
 
                 // display instructions
-                CreateInstructionText(instrStr = DrinkersInfo.instructions.value)
+                CreateInstructionText(instrStr = DisplayDrink.instructions.value)
                 CreateBottomSpace()
             }
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
+                    val id = DisplayDrink.drinkId.value
                     coroutineScope.launch {
                         if (!isInList.value) {
-                            DrinkersInfo.addDrinkById(id = DrinkersInfo.drinkId.value)
+                            DrinkersInfo.addDrinkById(id = id, "","0")
                             isInList.value = !isInList.value
                             Toast.makeText(
                                 context,
-                                DrinkersInfo.drinkName.value + " added to favorites",
+                                DisplayDrink.drinkName.value + " added to favorites",
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
-                            DrinkersInfo.deleteFromList(DrinkersInfo.drinkId.value)
+                            DrinkersInfo.deleteFromList(id)
                             isInList.value = !isInList.value
                             Toast.makeText(
                                 context,
-                                DrinkersInfo.drinkName.value + " removed from favorites",
+                                DisplayDrink.drinkName.value + " removed from favorites",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -320,9 +323,11 @@ fun CreateRating() {
                 cursorColor = Color.Black
 
             ),
-            modifier = Modifier,
             label = { Text(text = "Rate Here")},
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+
         )
     }
 }
@@ -362,7 +367,6 @@ fun CreateRatingStars(
 
 @Composable
 private fun CreateRateButton() {
-    val currentDrink = DrinkersInfo.currentDrink
     val colors = listOf(Color.Transparent, MaterialTheme.colorScheme.tertiary, Color.Transparent)
     val gradient = Brush.horizontalGradient(colors = colors)
 
@@ -377,25 +381,28 @@ private fun CreateRateButton() {
     ) {
         Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier.background(borderGradient))
 
+        val coroutineScope = rememberCoroutineScope()
+
         Button(
             modifier = Modifier
                 .background(gradient),
             onClick = {
-                isRating.value = !isRating.value
-                isDoneRating.value = !isDoneRating.value
+                coroutineScope.launch{
+                    DrinkersInfo.addRatingToDrinkByID(DisplayDrink.drinkId.value, stringRating.value, intRating.value)
 
-                DrinkersInfo.addRatingToDrinkByID(currentDrink, stringRating.value, intRating.value)
+                    //set flags
+                    isRating.value = !isRating.value
+                    isDoneRating.value = !isDoneRating.value
 
-                //set flags
-                stringRating.value = currentDrink.ratingText.toString()
-                intRating.value = currentDrink.rating
-                hasRating.value = currentDrink.hasRating()
+                }
             }
         ) {
+
             if(isRating.value){
                 Text(text = "Save Rating")
             }
-            else if (currentDrink.hasRating())
+            else if (DrinkersInfo.userFavList.find { DisplayDrink.drinkId.value == it.idDrink }
+                    ?.hasRating() == true)
                 Text(text = "Edit Rating")
             else
                 Text(text = "Add Rating")

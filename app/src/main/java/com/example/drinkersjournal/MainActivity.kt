@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(Unit) {
                     DrinkersInfo.setDataStore(favDrinksDataStore)
                     DrinkersInfo.setList(favDrinksDataStore.favDrinksFlow)
+
                 }
                 Navigation()
             }

@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
+import com.example.drinkersjournal.data.DisplayDrink
 import com.example.drinkersjournal.data.DrinkByIngredients
 import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.topBarFont
@@ -67,7 +68,7 @@ fun DrinkListByIngredientScreen (navController: NavController){
                                 .fillMaxWidth()
                                 .height(100.dp)
                                 .clickable {
-                                    DrinkersInfo.drinkId.value = drink.idDrink
+                                    DisplayDrink.drinkId.value = drink.idDrink
                                     navController.navigate(Screen.DrinkDetailsScreen.route)
                                 },
                         ) {
@@ -86,10 +87,10 @@ fun DrinkListByIngredientScreen (navController: NavController){
                                 text = drink.strDrink,
                                 textAlign = TextAlign.Left,
                                 color = Color.White,
-                                fontSize = 28.sp,
+                                fontSize = 24.sp,
                                 overflow = TextOverflow.Ellipsis,
                                 fontFamily = drinkNameFont,
-                                modifier = Modifier.padding(5.dp),
+                                modifier = Modifier.padding(5.dp)
 
                             )
                         }

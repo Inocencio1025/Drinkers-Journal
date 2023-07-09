@@ -25,6 +25,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.data.DisplayDrink
 import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
 import com.example.drinkersjournal.ui.theme.topBarFont
@@ -58,6 +59,7 @@ fun FavoriteDrinksScreen(navController: NavController){
                 },
             )
         },
+        /*
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -71,6 +73,8 @@ fun FavoriteDrinksScreen(navController: NavController){
                 Text(text = listSize.toString())
             }
         },
+        
+         */
         bottomBar = {
             BottomNavigationBar(
                 items = listOf(
@@ -121,7 +125,7 @@ fun FavoriteDrinksScreen(navController: NavController){
                                     .fillMaxWidth()
                                     .height(100.dp)
                                     .clickable {
-                                        DrinkersInfo.drinkId.value = drink.idDrink
+                                        DisplayDrink.drinkId.value = drink.idDrink
                                         navController.navigate(Screen.DrinkDetailsScreen.route)
                                     }
                             ) {
@@ -157,8 +161,10 @@ fun CreateDrinkInList(drink: Drink) {
         //.background(Color.Green)
     ) {
         // drink name
+        val drinkName = remember { mutableStateOf(drink.strDrink.toString()) }
+
         Text(
-            text = drink.strDrink.toString(),
+            text = drinkName.value,
             textAlign = TextAlign.Left,
             color = Color.White,
             fontSize = 28.sp,
@@ -168,9 +174,10 @@ fun CreateDrinkInList(drink: Drink) {
             //.background(color = Color.Red)
         )
         // drink rating text
-        if (!drink.ratingText.isNullOrEmpty()){
+        val ratingText = remember { mutableStateOf(drink.ratingText.toString()) }
+        if (!ratingText.value.isNullOrEmpty()){
             Text(
-                text = "\"" + drink.ratingText.toString() + "\"",
+                text = "\"" + ratingText.value + "\"",
                 textAlign = TextAlign.Left,
                 fontFamily = drinkRatingTextFont,
                 color = Color.Green,
@@ -183,7 +190,9 @@ fun CreateDrinkInList(drink: Drink) {
             )
         }
     }
-    if (drink.rating != 0){
+    val rating = remember { mutableStateOf(drink.rating) }
+
+    if (rating.value != "0"){
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Center,

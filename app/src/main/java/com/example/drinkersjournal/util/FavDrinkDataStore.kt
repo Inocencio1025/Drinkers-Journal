@@ -2,8 +2,8 @@ package com.example.drinkersjournal.util
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import com.example.drinkersjournal.util.FavDrinkSerializer
 import com.example.drinkersjournal.ListOfDrinks
+import com.example.drinkersjournal.ProtoDrink
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import okio.IOException
@@ -23,14 +23,22 @@ class FavDrinksDataStore private constructor(private val FavDrinksStore: DataSto
         }
     }
 
-    suspend fun saveNewDrink(newDrink: String) {
-        FavDrinksStore.updateData { drink ->
-            if (drink.toBuilder().drinkIDList.contains(newDrink)) {
-                drink
+    suspend fun saveNewDrink(newProtoDrink: ProtoDrink.Builder) {
+
+        FavDrinksStore.updateData { drinks ->
+            val existingList = drinks.toBuilder().protoDrinkList
+
+            if (existingList.any{ it.id == newProtoDrink.id}){
+                drinks
             } else {
-                drink.toBuilder().addDrinkID(newDrink).build()
+                drinks.toBuilder()
+                    .addProtoDrink(newProtoDrink)
+                    .build()
             }
+
         }
+        Log.e("LOOK", newProtoDrink.id + " -------- " + newProtoDrink.ratingNum)
+
     }
 
     suspend fun clearListOfDrinks() {
@@ -41,10 +49,10 @@ class FavDrinksDataStore private constructor(private val FavDrinksStore: DataSto
 
     suspend fun removeDrink(drink: String) {
         FavDrinksStore.updateData { drinks ->
-            val existingDrink = drinks.toBuilder().drinkIDList
-            if (existingDrink.contains(drink)) {
-                val newList = existingDrink.filter { it != drink }
-                drinks.toBuilder().clear().addAllDrinkID(newList).build()
+            val existingList = drinks.toBuilder().protoDrinkList
+            if (existingList.any{ it.id == drink}) {
+                val newList = existingList.filter { it.id != drink }
+                drinks.toBuilder().clear().addAllProtoDrink(newList).build()
             } else {
                 drinks
             }
