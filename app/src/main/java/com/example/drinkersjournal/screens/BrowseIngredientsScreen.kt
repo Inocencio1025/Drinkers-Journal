@@ -5,11 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,124 +12,75 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.drinkersjournal.DrinkersInfo
-import com.example.drinkersjournal.data.BottomNavItem
 import com.example.drinkersjournal.data.Ingredient
 import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
-import com.example.drinkersjournal.ui.theme.topBarFont
 import com.example.drinkersjournal.util.Screen
 
-
+//ingredient entries
 val nonAlcoholicList = mutableListOf<Ingredient>()
 val alcoholicList = mutableListOf<Ingredient>()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BrowseDrinksScreen(navController: NavController) {
+fun BrowseIngredientsScreen(navController: NavController) {
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Browse By Ingredient",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontFamily = topBarFont
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(Icons.Filled.ArrowBack, "backIcon")
+        topBar = { CreateTopBar(text = "Browse By Ingredient", navController = navController) },
+        bottomBar = { CreateBottomNavBar(navController) },
+        content = { paddingValues ->
+            SetBackgroundImage()
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())
+            ) {
+                //Alcoholic entries
+                header { CreateCategoryTitle(text = "Alcoholic Ingredients") }
+                itemsIndexed(alcoholicList) { _, ingredient ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .padding(16.dp)
+                            .clickable {
+                                DrinkersInfo.setIngredientForSearch(ingredient.name)
+                                navController.navigate(Screen.DrinkListByIngredientScreen.route)
+                            }
+                    ){
+                        CreateIngredientCard(
+                            drinkName = ingredient.name,
+                            imageUrl = ingredient.imageUrl
+                        )
                     }
-                },
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                items = listOf(
-                    BottomNavItem(
-                        name = "Try Drink",
-                        route = "random_drink_screen",
-                        icon = Icons.Default.Refresh
-                    ),
-                    BottomNavItem(
-                        name = "Browse",
-                        route = "browse_drinks_screen",
-                        icon = Icons.Default.Search
-                    ),
-                    BottomNavItem(
-                        name = "Favorites",
-                        route = "view_list_screen",
-                        icon = Icons.Default.List
-                    )
-                ),
-                navController = navController,
-                onItemClick = {
-                    navController.navigate(it.route)
                 }
-            )
-        }
-    ) { paddingValues ->
-        SetBackgroundImage()
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())
-        ) {
-
-            header {
-                CreateCategoryTitle(text = "Alcoholic Ingredients")
-            }
-            itemsIndexed(alcoholicList) { _, ingredient ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .padding(16.dp)
-                        .clickable {
-
-                            DrinkersInfo.setIngredientForSearch(ingredient.name)
-                            navController.navigate(Screen.DrinkListByIngredientScreen.route)
-                        }
-                ){
-                    CreateIngredientCard(
-                        drinkName = ingredient.name,
-                        imageUrl = ingredient.imageUrl
-                    )
-                }
-            }
-
-            header {
-                CreateCategoryTitle(text = "Nonalcoholic Ingredients")
-            }
-            itemsIndexed(nonAlcoholicList) { _, ingredient ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .padding(16.dp)
-                        .clickable {
-                            DrinkersInfo.setIngredientForSearch(ingredient.name)
-                            navController.navigate(Screen.DrinkListByIngredientScreen.route)
-                        }
-                ){
-                    CreateIngredientCard(
-                        drinkName = ingredient.name,
-                        imageUrl = ingredient.imageUrl
-                    )
+                //nonAlcoholic entries
+                header { CreateCategoryTitle(text = "Nonalcoholic Ingredients") }
+                itemsIndexed(nonAlcoholicList) { _, ingredient ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .padding(16.dp)
+                            .clickable {
+                                DrinkersInfo.setIngredientForSearch(ingredient.name)
+                                navController.navigate(Screen.DrinkListByIngredientScreen.route)
+                            }
+                    ){
+                        CreateIngredientCard(
+                            drinkName = ingredient.name,
+                            imageUrl = ingredient.imageUrl
+                        )
+                    }
                 }
             }
         }
-        CreateBottomSpace()
-    }
+    )
 }
 
 fun LazyGridScope.header(
@@ -146,7 +92,8 @@ fun LazyGridScope.header(
 @Composable
 fun CreateCategoryTitle(text: String){
     Surface(
-        modifier = Modifier.padding(top = 5.dp, start = 8.dp, end = 8.dp)
+        modifier = Modifier.padding(top = 5.dp, start = 8.dp, end = 8.dp),
+        color = MaterialTheme.colorScheme.secondary
     ) {
         Box(
             modifier = Modifier
@@ -236,9 +183,6 @@ fun setBrowseList() {
     alcoholicList.add(Ingredient("Tequila", "https://www.thecocktaildb.com/images/ingredients/tequila-Medium.png"))
     alcoholicList.add(Ingredient("Rum", "https://www.thecocktaildb.com/images/ingredients/rum-Medium.png"))
     alcoholicList.add(Ingredient("Gin", "https://www.thecocktaildb.com/images/ingredients/gin-Medium.png"))
-    alcoholicList.add(Ingredient("Whiskey", "https://www.thecocktaildb.com/images/ingredients/whiskey-Medium.png"))
-    alcoholicList.add(Ingredient("Blended Whiskey", "https://www.thecocktaildb.com/images/ingredients/Blended%20whiskey-Medium.png"))
-    alcoholicList.add(Ingredient("Irish Whiskey", "https://www.thecocktaildb.com/images/ingredients/Irish%20Whiskey-Medium.png"))
     alcoholicList.add(Ingredient("Light Rum", "https://www.thecocktaildb.com/images/ingredients/Light%20rum-Medium.png"))
     alcoholicList.add(Ingredient("Malibu Rum", "https://www.thecocktaildb.com/images/ingredients/Malibu%20rum-Medium.png"))
     alcoholicList.add(Ingredient("Bourbon", "https://www.thecocktaildb.com/images/ingredients/bourbon-Medium.png"))
@@ -246,6 +190,9 @@ fun setBrowseList() {
     alcoholicList.add(Ingredient("Cognac", "https://www.thecocktaildb.com/images/ingredients/cognac-Medium.png"))
     alcoholicList.add(Ingredient("Cointreau", "https://www.thecocktaildb.com/images/ingredients/cointreau-Medium.png"))
     alcoholicList.add(Ingredient("Amaretto", "https://www.thecocktaildb.com/images/ingredients/amaretto-Medium.png"))
+    alcoholicList.add(Ingredient("Whiskey", "https://www.thecocktaildb.com/images/ingredients/whiskey-Medium.png"))
+    alcoholicList.add(Ingredient("Blended Whiskey", "https://www.thecocktaildb.com/images/ingredients/Blended%20whiskey-Medium.png"))
+    alcoholicList.add(Ingredient("Irish Whiskey", "https://www.thecocktaildb.com/images/ingredients/Irish%20Whiskey-Medium.png"))
     alcoholicList.add(Ingredient("Midori Melon Liqueur", "https://www.thecocktaildb.com/images/ingredients/midori-Medium.png"))
     alcoholicList.add(Ingredient("Dry Vermouth", "https://www.thecocktaildb.com/images/ingredients/Dry%20vermouth-Medium.png"))
     alcoholicList.add(Ingredient("Triple Sec", "https://www.thecocktaildb.com/images/ingredients/Triple%20sec-Medium.png"))

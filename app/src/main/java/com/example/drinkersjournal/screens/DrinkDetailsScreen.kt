@@ -1,6 +1,5 @@
 package com.example.drinkersjournal.screens
 
-import android.icu.text.AlphabeticIndex.Bucket.LabelType
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.MutableTransitionState
@@ -18,7 +17,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -39,75 +37,36 @@ import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
 import com.example.drinkersjournal.ui.theme.topBarFont
 import kotlinx.coroutines.launch
 
-var stringRating = mutableStateOf("")
-var intRating = mutableStateOf(0)
-var hasRating = mutableStateOf(false)
-var isRating = mutableStateOf(false)
-var isDoneRating = mutableStateOf(true)
+// values for screen view
+private var stringRating = mutableStateOf("")
+private var intRating = mutableStateOf(0)
+// flags because im a bad programmer
+private var isRating = mutableStateOf(false)
+private var isDoneRating = mutableStateOf(true)
 private var isInList = mutableStateOf(false)
 
 
-
-@Composable
-fun DrinkDetailsScreen (navController: NavController) {
-    stringRating.value = ""
-    intRating.value = 0
-    isRating.value = false
-    // Searches drink with ID that is currently stored in DrinkersInfo
-    // and stores retrieved info in DrinkersInfo. isIntList is bool
-    // for if retrieved drink is in fav list
-    isInList.value = DrinkersInfo.retrieveDrinkInfo()
-
-    // sets up content to display
-    SetContent(navController)
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SetContent(navController: NavController) {
+fun DrinkDetailsScreen (navController: NavController) {
+    // Searches drink ID that is currently stored in DisplayDrink
+    // and fill the rest of its fields. isIntList is bool
+    // for if retrieved drink is in fav list
+    isInList.value = DrinkersInfo.getInfoDrink()
+    resetFlags()
 
-
-
-    if(isInList.value) {
-        val currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DisplayDrink.drinkId.value }
-        if (currentDrink != null) {
-            stringRating.value = currentDrink.ratingText.toString()
-            intRating.value = currentDrink.rating.toInt()
-        }
+    val currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DisplayDrink.drinkId.value }
+    if (currentDrink != null) {
+        stringRating.value = currentDrink.ratingText.toString()
+        intRating.value = currentDrink.rating.toInt()
     }
 
-
-
-
-    // For coroutines
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val focusRequester = remember { FocusRequester() }
-
-
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Drink Details",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontFamily = topBarFont
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(Icons.Filled.ArrowBack, "backIcon")
-                    }
-                },
-            )
-        },
+        topBar = { CreateTopBar("Drink Details", navController )},
+        bottomBar = { CreateBottomNavBar(navController) },
+        floatingActionButton = { CreateFAB() },
         content = { paddingValues ->
             SetBackgroundImage()
-            Spacer(modifier = Modifier.height(20.dp))
 
             Column(
                 modifier = Modifier
@@ -118,24 +77,16 @@ private fun SetContent(navController: NavController) {
                     )
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally)
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
             {
 
-                // drink image
                 CreateDrinkImage(DisplayDrink.imageUrlStr.value)
-
-                // drink name
                 CreateNameText(nameStr = DisplayDrink.drinkName.value)
 
-                //Displays Rating
+                //Appearance is Conditional
                 CreateRating()
-
-                //Add Button for rating
-                AnimatedVisibility(visible = isInList.value) {
-                    CreateRateButton()
-                }
-
-
+                CreateRateButton()
 
                 // Displays ingredients
                 var i = 0
@@ -152,75 +103,102 @@ private fun SetContent(navController: NavController) {
                 CreateInstructionText(instrStr = DisplayDrink.instructions.value)
                 CreateBottomSpace()
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val id = DisplayDrink.drinkId.value
-                    coroutineScope.launch {
-                        if (!isInList.value) {
-                            DrinkersInfo.addDrinkById(id = id, "","0")
-                            isInList.value = !isInList.value
-                            Toast.makeText(
-                                context,
-                                DisplayDrink.drinkName.value + " added to favorites",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            DrinkersInfo.deleteFromList(id)
-                            isInList.value = !isInList.value
-                            Toast.makeText(
-                                context,
-                                DisplayDrink.drinkName.value + " removed from favorites",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                },
-                contentColor = Color.Yellow,
-                shape = CircleShape
-
-            ) {
-                if (!isInList.value) {
-                    Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = "Add to Favorites"
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "Add to Favorites"
-                    )
-                }
-            }
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                items = listOf(
-                    BottomNavItem(
-                        name = "Try Drink",
-                        route = "random_drink_screen",
-                        icon = Icons.Default.Refresh
-                    ),
-                    BottomNavItem(
-                        name = "Browse",
-                        route = "browse_drinks_screen",
-                        icon = Icons.Default.Search
-                    ),
-                    BottomNavItem(
-                        name = "Favorites",
-                        route = "view_list_screen",
-                        icon = Icons.Default.List
-                    )
-                ),
-                navController = navController,
-                onItemClick = {
-                    navController.navigate(it.route)
-                }
-            )
         }
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreateTopBar(text: String, navController: NavController) {
+    CenterAlignedTopAppBar(
+        title = { Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontFamily = topBarFont
+        ) },
+        navigationIcon = {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(Icons.Filled.ArrowBack, "backIcon")
+            }
+        },
+    )
+}
+
+@Composable
+private fun CreateFAB() {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    FloatingActionButton(
+        onClick = {
+
+            val id = DisplayDrink.drinkId.value
+            coroutineScope.launch {
+                if (!isInList.value) {
+                    DrinkersInfo.addDrinkById(id = id, "", "0")
+                    isInList.value = !isInList.value
+                    Toast.makeText(
+                        context,
+                        DisplayDrink.drinkName.value + " added to favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    DrinkersInfo.deleteFromList(id)
+                    isInList.value = !isInList.value
+                    Toast.makeText(
+                        context,
+                        DisplayDrink.drinkName.value + " removed from favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        },
+        contentColor = Color.Yellow,
+        shape = CircleShape
+    ) {
+        if (!isInList.value) {
+            Icon(
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = "Add to Favorites"
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Add to Favorites"
+            )
+        }
+    }
+}
+
+@Composable
+fun CreateBottomNavBar(navController: NavController) {
+    BottomNavigationBar(
+        items = listOf(
+            BottomNavItem(
+                name = "Browse",
+                route = "browse_drinks_screen",
+                icon = Icons.Default.Search
+            ),
+            BottomNavItem(
+                name = "Try Drink",
+                route = "random_drink_screen",
+                icon = Icons.Default.Refresh
+            ),
+            BottomNavItem(
+                name = "Favorites",
+                route = "view_list_screen",
+                icon = Icons.Default.List
+            )
+        ),
+        navController = navController,
+        onItemClick = {
+            navController.navigate(it.route)
+        }
+    )
+}
+
+
 
 
 // ------------------Composable for drink display----------------------------------------------//
@@ -373,44 +351,48 @@ private fun CreateRateButton() {
     val borderColors = listOf(Color.Transparent, MaterialTheme.colorScheme.onPrimary, Color.Transparent)
     val borderGradient = Brush.horizontalGradient(colors = borderColors)
 
-    Column(
-        modifier = Modifier
-            .padding(vertical = 10.dp)
-            .width(128.dp)
-            .height(64.dp)
-    ) {
-        Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier.background(borderGradient))
-
-        val coroutineScope = rememberCoroutineScope()
-
-        Button(
+    AnimatedVisibility(visible = isInList.value) {
+        Column(
             modifier = Modifier
-                .background(gradient),
-            onClick = {
-                coroutineScope.launch{
-                    DrinkersInfo.addRatingToDrinkByID(DisplayDrink.drinkId.value, stringRating.value, intRating.value)
-
-                    //set flags
-                    isRating.value = !isRating.value
-                    isDoneRating.value = !isDoneRating.value
-
-                }
-            }
+                .padding(vertical = 10.dp)
+                .width(128.dp)
+                .height(64.dp)
         ) {
+            Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier.background(borderGradient))
 
-            if(isRating.value){
-                Text(text = "Save Rating")
+            val coroutineScope = rememberCoroutineScope()
+
+            Button(
+                modifier = Modifier
+                    .background(gradient),
+                onClick = {
+                    coroutineScope.launch{
+                        DrinkersInfo.addRatingToDrinkByID(DisplayDrink.drinkId.value, stringRating.value, intRating.value)
+
+                        //set flags
+                        isRating.value = !isRating.value
+                        isDoneRating.value = !isDoneRating.value
+
+                    }
+                }
+            ) {
+
+                if(isRating.value){
+                    Text(text = "Save Rating")
+                }
+                else if (DrinkersInfo.userFavList.find { DisplayDrink.drinkId.value == it.idDrink }
+                        ?.hasRating() == true)
+                    Text(text = "Edit Rating")
+                else
+                    Text(text = "Add Rating")
             }
-            else if (DrinkersInfo.userFavList.find { DisplayDrink.drinkId.value == it.idDrink }
-                    ?.hasRating() == true)
-                Text(text = "Edit Rating")
-            else
-                Text(text = "Add Rating")
+            Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier
+                .background(borderGradient))
+
         }
-        Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier
-            .background(borderGradient))
 
     }
+
 
 }
 
@@ -446,6 +428,12 @@ fun CreateInstructionText(instrStr: String){
         modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp ),
         fontFamily = topBarFont
     )
+}
+
+private fun resetFlags() {
+    stringRating.value = ""
+    intRating.value = 0
+    isRating.value = false
 }
 
 @Composable

@@ -12,11 +12,11 @@ import com.example.drinkersjournal.util.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
 import retrofit2.Response
+
 
 object DrinkersInfo {
 
@@ -27,24 +27,78 @@ object DrinkersInfo {
     private lateinit var favDrinksDataStore: FavDrinksDataStore
 
 
-
-
-
-
-
-
-    //this string is specifically for the topAppBar to read ingredient name
-    //probably a better way to do this but I just wanna be done with this project
+    // this string is specifically for the topAppBar to read ingredient name
+    // probably a better way to do this but I just wanna be done with this project
     var ingredientAppBarTextHolder = ""
 
+    // uses id value stored in drinkId
+    fun getInfoDrink(): Boolean {
+        CoroutineScope(Dispatchers.Main).launch {
 
-    fun setIngredientForSearch(ingredient :String){
-        drinksByIngredient.clear()
-        retrieveDrinksByIngredient(ingredient)
-        ingredientAppBarTextHolder = ingredient
+            val response = try {
+                RetrofitInstance.api.getCocktailById(DisplayDrink.drinkId.value)
+            } catch (e: IOException) {
+                Log.e(TAG, "IOException, you might not have internet connection")
+                return@launch
+            } catch (e: HttpException) {
+                Log.e(TAG, "HttpException, unexpected response")
+                return@launch
+            }
+
+            if (response.isSuccessful && response.body() != null) {
+
+                //collects id, name and pic
+                DisplayDrink.drinkId.value = response.body()!!.drinks[0].idDrink
+
+                DisplayDrink.drinkName.value = response.body()!!.drinks[0].strDrink.toString()
+                DisplayDrink.imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
+
+                //collects ingredients
+                gatherIngredients(response)
+                gatherMeasurements(response)
+
+                //collect instructions
+                DisplayDrink.instructions.value = response.body()!!.drinks[0].strInstructions.toString()
+
+            }
+        }
+
+        return isInList(DisplayDrink.drinkId.value)
     }
 
-    // adds drink to user list
+    fun getInfoRandomDrink(): Boolean {
+        CoroutineScope(Dispatchers.Main).launch {
+
+            val response = try {
+                RetrofitInstance.api.getRandomCocktail()
+            } catch (e: IOException) {
+                //Log.e(TAG, "IOException, you might not have internet connection")
+                return@launch
+            } catch (e: HttpException) {
+                //Log.e(TAG, "HttpException, unexpected response")
+                return@launch
+            }
+
+            if (response.isSuccessful && response.body() != null) {
+
+                //collects id, name and pic
+                DisplayDrink.drinkId.value = response.body()!!.drinks[0].idDrink
+                DisplayDrink.drinkName.value = response.body()!!.drinks[0].strDrink.toString()
+                DisplayDrink.imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
+                //currentlyViewedDrinkId = drinkId.value
+
+                //collects ingredients
+                gatherIngredients(response)
+                gatherMeasurements(response)
+
+                //collect instructions
+                DisplayDrink.instructions.value = response.body()!!.drinks[0].strInstructions.toString()
+            }
+        }
+        return isInList(DisplayDrink.drinkId.value)
+    }
+
+    // gets drink via API call, and saves to user fav list
     suspend fun addDrinkById(id: String, rating: String, ratingNum: String, ){
         if (!isInList(id)) {
             CoroutineScope(Dispatchers.Main).launch {
@@ -125,6 +179,11 @@ object DrinkersInfo {
         }
     }
 
+    fun setIngredientForSearch(ingredient :String){
+        drinksByIngredient.clear()
+        retrieveDrinksByIngredient(ingredient)
+        ingredientAppBarTextHolder = ingredient
+    }
     private fun retrieveDrinksByIngredient(ingredient: String){
         CoroutineScope(Dispatchers.Main).launch {
 
@@ -147,81 +206,14 @@ object DrinkersInfo {
                         it.strDrinkThumb
                     )
                     drinksByIngredient.add(drinkByIngredients)
-                    Log.e("LOOK", ":)")
+                    //Log.e("LOOK", ":)")
 
                 }
             }
             else {
-                Log.e("LOOK", ":(")
+                //Log.e("LOOK", ":(")
             }
         }
-    }
-
-    // uses id value stored in drinkId
-    fun retrieveDrinkInfo(): Boolean {
-        CoroutineScope(Dispatchers.Main).launch {
-
-            val response = try {
-                RetrofitInstance.api.getCocktailById(DisplayDrink.drinkId.value)
-            } catch (e: IOException) {
-                Log.e(TAG, "IOException, you might not have internet connection")
-                return@launch
-            } catch (e: HttpException) {
-                Log.e(TAG, "HttpException, unexpected response")
-                return@launch
-            }
-
-            if (response.isSuccessful && response.body() != null) {
-
-                //collects id, name and pic
-                DisplayDrink.drinkId.value = response.body()!!.drinks[0].idDrink
-
-                DisplayDrink.drinkName.value = response.body()!!.drinks[0].strDrink.toString()
-                DisplayDrink.imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
-
-                //collects ingredients
-                gatherIngredients(response)
-                gatherMeasurements(response)
-
-                //collect instructions
-                DisplayDrink.instructions.value = response.body()!!.drinks[0].strInstructions.toString()
-
-            }
-        }
-
-        return isInList(DisplayDrink.drinkId.value)
-    }
-
-    fun retrieveRandomDrink(): Boolean {
-        CoroutineScope(Dispatchers.Main).launch {
-
-            val response = try {
-                RetrofitInstance.api.getRandomCocktail()
-            } catch (e: IOException) {
-                //Log.e(TAG, "IOException, you might not have internet connection")
-                return@launch
-            } catch (e: HttpException) {
-                //Log.e(TAG, "HttpException, unexpected response")
-                return@launch
-            }
-
-            if (response.isSuccessful && response.body() != null) {
-
-                //collects id, name and pic
-                DisplayDrink.drinkId.value = response.body()!!.drinks[0].idDrink
-                DisplayDrink.drinkName.value = response.body()!!.drinks[0].strDrink.toString()
-                DisplayDrink.imageUrlStr.value = response.body()!!.drinks[0].strDrinkThumb.toString()
-                //currentlyViewedDrinkId = drinkId.value
-
-                //collects ingredients
-                gatherIngredients(response)
-                gatherMeasurements(response)
-
-                //collect instructions
-                DisplayDrink.instructions.value = response.body()!!.drinks[0].strInstructions.toString()
-            }
-        }
-        return isInList(DisplayDrink.drinkId.value)
     }
 
     suspend fun deleteFromList(drinkId: String){
@@ -240,22 +232,22 @@ object DrinkersInfo {
 
     // for getting user favorite drink list from dataStore
     suspend fun setList(favDrinksFlow: Flow<ListOfDrinks>) {
-
         favDrinksFlow.collect{ drink ->
             val list = drink.protoDrinkList
             list.forEach{
                 addDrinkById(it.id,  it.rating, it.ratingNum)
 
-                Log.e("LOOK", it.id + " -------- " + it.ratingNum)
+               // Log.e("LOOK", it.id + " -------- " + it.ratingNum)
             }
         }
     }
-
     // not sure if this is the correct way to do this...
     fun setDataStore(favDrinksDataStore: FavDrinksDataStore) {
         this.favDrinksDataStore = favDrinksDataStore
     }
 
+    // for changing rating on a drink in user fav list
+    // after it is added
     suspend fun addRatingToDrinkByID(drinkID: String, ratingString: String, ratingNum: Int) {
         val editedDrink = userFavList.find { DisplayDrink.drinkId.value == it.idDrink }
         if (editedDrink != null) {

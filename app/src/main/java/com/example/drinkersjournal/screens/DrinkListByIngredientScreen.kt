@@ -10,7 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -22,37 +21,17 @@ import com.example.drinkersjournal.DrinkersInfo
 import com.example.drinkersjournal.data.DisplayDrink
 import com.example.drinkersjournal.data.DrinkByIngredients
 import com.example.drinkersjournal.ui.theme.drinkNameFont
-import com.example.drinkersjournal.ui.theme.topBarFont
 import com.example.drinkersjournal.util.Screen
 
 // list of drinks with a common ingredient fetched by the api
 val drinksByIngredient = mutableListOf<DrinkByIngredients>()
+
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DrinkListByIngredientScreen (navController: NavController){
-
-
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = DrinkersInfo.ingredientAppBarTextHolder,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontFamily = topBarFont
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(Icons.Filled.ArrowBack, "backIcon")
-                    }
-                },
-            )
-        }, content = { paddingValues ->
-
+        topBar = { CreateTopBar(text = DrinkersInfo.ingredientAppBarTextHolder, navController = navController) },
+        content = { paddingValues ->
             SetBackgroundImage()
 
             LazyColumn(
@@ -72,7 +51,6 @@ fun DrinkListByIngredientScreen (navController: NavController){
                                     navController.navigate(Screen.DrinkDetailsScreen.route)
                                 },
                         ) {
-
                             // drink image
                             GlideImage(
                                 model = drink.strDrinkThumb,
@@ -80,7 +58,6 @@ fun DrinkListByIngredientScreen (navController: NavController){
                                 modifier = Modifier
                                     .fillMaxHeight(1f)
                             )
-
 
                             // drink name
                             Text(
@@ -91,7 +68,6 @@ fun DrinkListByIngredientScreen (navController: NavController){
                                 overflow = TextOverflow.Ellipsis,
                                 fontFamily = drinkNameFont,
                                 modifier = Modifier.padding(5.dp)
-
                             )
                         }
                     }
@@ -99,6 +75,4 @@ fun DrinkListByIngredientScreen (navController: NavController){
             }
         }
     )
-
-
 }

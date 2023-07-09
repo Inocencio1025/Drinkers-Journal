@@ -35,7 +35,7 @@ fun Navigation() {
 
         // Browse Drinks Screen
         composable(route = Screen.BrowseDrinksScreen.route){
-            BrowseDrinksScreen(navController)
+            BrowseIngredientsScreen(navController)
         }
 
         //list of drinks by ingredient

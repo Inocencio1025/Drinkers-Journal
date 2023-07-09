@@ -35,3 +35,5 @@ object FavDrinkSerializer : Serializer<ListOfDrinks> {
 }
 
 
+
+

@@ -18,6 +18,9 @@ import com.example.drinkersjournal.util.Navigation
 
 
 class MainActivity : ComponentActivity() {
+    // Accessing datastore for loading/saving at app start
+    // Im more than positive there's a better way to do this,
+    // but that's a problem for future me
     private val Context.myFavDrinksDataStore: DataStore<ListOfDrinks> by dataStore(
         fileName = "favList.pb",
         serializer = FavDrinkSerializer,
@@ -28,19 +31,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.statusBarColor = Color.Black.hashCode()
-
         super.onCreate(savedInstanceState)
-        //setTheme(R.style.Theme_DrinkersJournal)
         setContent {
             DrinkersJournalTheme{
-
+                // loads in favorites list
                 setBrowseList()
                 LaunchedEffect(Unit) {
                     DrinkersInfo.setDataStore(favDrinksDataStore)
                     DrinkersInfo.setList(favDrinksDataStore.favDrinksFlow)
+                }// end load
 
-                }
-                Navigation()
+                Navigation()// Navigates to HomeScreen (Start of app)
             }
         }
     }
