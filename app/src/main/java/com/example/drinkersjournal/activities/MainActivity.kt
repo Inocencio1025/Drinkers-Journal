@@ -1,26 +1,24 @@
-package com.example.drinkersjournal
+package com.example.drinkersjournal.activities
 
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
+import com.example.drinkersjournal.util.DrinkersInfo
+import com.example.drinkersjournal.ListOfDrinks
 import com.example.drinkersjournal.screens.setBrowseList
 import com.example.drinkersjournal.ui.theme.DrinkersJournalTheme
-import com.example.drinkersjournal.util.FavDrinkSerializer
-import com.example.drinkersjournal.util.FavDrinksDataStore
+import com.example.drinkersjournal.datastore.FavDrinkSerializer
+import com.example.drinkersjournal.datastore.FavDrinksDataStore
 import com.example.drinkersjournal.util.Navigation
 
 
 class MainActivity : ComponentActivity() {
-    // Accessing datastore for loading/saving at app start
-    // Im more than positive there's a better way to do this,
-    // but that's a problem for future me
+    // Instantiate datastore (for loading/saving at app start)
     private val Context.myFavDrinksDataStore: DataStore<ListOfDrinks> by dataStore(
         fileName = "favList.pb",
         serializer = FavDrinkSerializer,
@@ -41,7 +39,7 @@ class MainActivity : ComponentActivity() {
                     DrinkersInfo.setList(favDrinksDataStore.favDrinksFlow)
                 }// end load
 
-                Navigation()// Navigates to HomeScreen (Start of app)
+                Navigation()// Navigates user to HomeScreen (Start of app)
             }
         }
     }

@@ -4,8 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,14 +15,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.drinkersjournal.DrinkersInfo
+import com.example.drinkersjournal.util.DrinkersInfo
+import com.example.drinkersjournal.util.DrinkersInfo.drinksByIngredient
 import com.example.drinkersjournal.data.DisplayDrink
-import com.example.drinkersjournal.data.DrinkByIngredients
 import com.example.drinkersjournal.ui.theme.drinkNameFont
-import com.example.drinkersjournal.util.Screen
+import com.example.drinkersjournal.data.Screen
 
-// list of drinks with a common ingredient fetched by the api
-val drinksByIngredient = mutableListOf<DrinkByIngredients>()
+
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +30,7 @@ fun DrinkListByIngredientScreen (navController: NavController){
         topBar = { CreateTopBar(text = DrinkersInfo.ingredientAppBarTextHolder, navController = navController) },
         content = { paddingValues ->
             SetBackgroundImage()
+
 
             LazyColumn(
                 modifier = Modifier.padding(top = paddingValues.calculateTopPadding(), bottom = paddingValues.calculateBottomPadding())

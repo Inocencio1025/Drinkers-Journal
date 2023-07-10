@@ -1,4 +1,4 @@
-package com.example.drinkersjournal.util
+package com.example.drinkersjournal.api
 
 import com.example.drinkersjournal.data.DrinksByIngredients
 import com.example.drinkersjournal.data.Drinks

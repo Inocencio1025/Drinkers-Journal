@@ -1,5 +1,5 @@
 
-package com.example.drinkersjournal.util
+package com.example.drinkersjournal.datastore
 
 import android.content.Context
 import androidx.datastore.core.CorruptionException

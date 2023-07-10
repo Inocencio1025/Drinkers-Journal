@@ -1,5 +1,6 @@
 package com.example.drinkersjournal.screens
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,32 +8,27 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.drinkersjournal.DrinkersInfo
+import com.example.drinkersjournal.util.DrinkersInfo
 import com.example.drinkersjournal.R
-import com.example.drinkersjournal.data.BottomNavItem
-import com.example.drinkersjournal.util.Screen
-
+import com.example.drinkersjournal.data.Screen
 
 @Composable
 fun HomeScreen(navController: NavController){
     // DrinkersInfo is basically where all my data-retrieval functions happens
     DrinkersInfo.getInfoRandomDrink()
-    // I created this before learning what a viewModel was, in the future
+    // I made this before learning what a viewModel was, in the future
     // I will implement viewModels until DrinkersInfo should be gone entirely
 
     Surface() {
         SetBackgroundImage()
+
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -67,7 +63,7 @@ fun HomeScreen(navController: NavController){
 }
 
 @Composable
-fun CreateAppLogoImage(modifier : Modifier){
+private fun CreateAppLogoImage(modifier : Modifier){
     Image(
         painter = painterResource(id = R.drawable.ic_title),
         contentDescription = "Title",
@@ -76,7 +72,7 @@ fun CreateAppLogoImage(modifier : Modifier){
 }
 
 @Composable
-fun CreateMainMenuButton(label : String,route: String, navController: NavController, modifier : Modifier){
+private fun CreateMainMenuButton(label : String,route: String, navController: NavController, modifier : Modifier){
     val colors = listOf(Color.Transparent, MaterialTheme.colorScheme.tertiary, Color.Transparent)
     val gradient = Brush.horizontalGradient(colors = colors)
 
@@ -105,53 +101,4 @@ fun CreateMainMenuButton(label : String,route: String, navController: NavControl
         }
     }
     Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier.background(borderGradient))
-}
-
-@Composable
-fun BottomNavigationBar(
-    items: List<BottomNavItem>,
-    navController: NavController,
-    modifier: Modifier = Modifier,
-    onItemClick: (BottomNavItem) -> Unit
-){
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    NavigationBar(
-        modifier = modifier,
-        tonalElevation = 5.dp
-    ) {
-        items.forEach{ item ->
-            val selected = item.route == backStackEntry.value?.destination?.route
-            NavigationBarItem(
-                selected = selected,
-                onClick = { onItemClick(item) },
-                icon = {
-                    Column(horizontalAlignment = CenterHorizontally) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.name)
-                        if(selected){
-                            Text(
-                                text = item.name,
-                                textAlign = TextAlign.Center,
-                                fontSize = 10.sp)
-                        }
-                    }
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun SetBackgroundImage(){
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_temporary_home_background),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
-        )
-    }
 }

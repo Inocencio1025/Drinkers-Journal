@@ -17,15 +17,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.drinkersjournal.DrinkersInfo
+import com.example.drinkersjournal.util.DrinkersInfo
 import com.example.drinkersjournal.data.Ingredient
 import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
-import com.example.drinkersjournal.util.Screen
+import com.example.drinkersjournal.data.Screen
 
-//ingredient entries
-val nonAlcoholicList = mutableListOf<Ingredient>()
-val alcoholicList = mutableListOf<Ingredient>()
+// ingredient (hard-coded) entries
+private val nonAlcoholicList = mutableListOf<Ingredient>()
+private val alcoholicList = mutableListOf<Ingredient>()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +49,7 @@ fun BrowseIngredientsScreen(navController: NavController) {
                             .fillMaxWidth(0.5f)
                             .padding(16.dp)
                             .clickable {
+
                                 DrinkersInfo.setIngredientForSearch(ingredient.name)
                                 navController.navigate(Screen.DrinkListByIngredientScreen.route)
                             }
@@ -90,7 +91,7 @@ fun LazyGridScope.header(
 }
 
 @Composable
-fun CreateCategoryTitle(text: String){
+private fun CreateCategoryTitle(text: String){
     Surface(
         modifier = Modifier.padding(top = 5.dp, start = 8.dp, end = 8.dp),
         color = MaterialTheme.colorScheme.secondary
@@ -113,7 +114,7 @@ fun CreateCategoryTitle(text: String){
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CreateIngredientCard(
+private fun CreateIngredientCard(
     drinkName: String,
     imageUrl: String,
     modifier: Modifier = Modifier

@@ -2,7 +2,6 @@ package com.example.drinkersjournal.screens
 
 import android.widget.Toast
 import androidx.compose.animation.*
-import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,20 +20,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.example.drinkersjournal.DrinkersInfo
-import com.example.drinkersjournal.data.BottomNavItem
+import com.example.drinkersjournal.util.DrinkersInfo
 import com.example.drinkersjournal.data.DisplayDrink
-import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
-import com.example.drinkersjournal.ui.theme.topBarFont
 import kotlinx.coroutines.launch
 
 // values for screen view
@@ -49,13 +40,14 @@ private var isInList = mutableStateOf(false)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrinkDetailsScreen (navController: NavController) {
+    resetFlags()
+
     // Searches drink ID that is currently stored in DisplayDrink
     // and fill the rest of its fields. isIntList is bool
     // for if retrieved drink is in fav list
     isInList.value = DrinkersInfo.getInfoDrink()
-    resetFlags()
 
-    val currentDrink = DrinkersInfo.userFavList.find { it.idDrink == DisplayDrink.drinkId.value }
+    val currentDrink = DrinkersInfo.userFavDrinkList.find { it.idDrink == DisplayDrink.drinkId.value }
     if (currentDrink != null) {
         stringRating.value = currentDrink.ratingText.toString()
         intRating.value = currentDrink.rating.toInt()
@@ -101,27 +93,8 @@ fun DrinkDetailsScreen (navController: NavController) {
 
                 // display instructions
                 CreateInstructionText(instrStr = DisplayDrink.instructions.value)
-                CreateBottomSpace()
             }
         }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CreateTopBar(text: String, navController: NavController) {
-    CenterAlignedTopAppBar(
-        title = { Text(
-            text = text,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            fontFamily = topBarFont
-        ) },
-        navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Filled.ArrowBack, "backIcon")
-            }
-        },
     )
 }
 
@@ -171,96 +144,9 @@ private fun CreateFAB() {
     }
 }
 
-@Composable
-fun CreateBottomNavBar(navController: NavController) {
-    BottomNavigationBar(
-        items = listOf(
-            BottomNavItem(
-                name = "Browse",
-                route = "browse_drinks_screen",
-                icon = Icons.Default.Search
-            ),
-            BottomNavItem(
-                name = "Try Drink",
-                route = "random_drink_screen",
-                icon = Icons.Default.Refresh
-            ),
-            BottomNavItem(
-                name = "Favorites",
-                route = "view_list_screen",
-                icon = Icons.Default.List
-            )
-        ),
-        navController = navController,
-        onItemClick = {
-            navController.navigate(it.route)
-        }
-    )
-}
-
-
-
-
-// ------------------Composable for drink display----------------------------------------------//
-
-
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalAnimationApi::class) //for glideImage
-@Composable
-fun CreateDrinkImage(img: String) {
-
-    val state = remember {
-        MutableTransitionState(false).apply {
-            // Start the animation immediately.
-            targetState = true
-        }
-    }
-
-    Box(modifier = Modifier.padding(24.dp)){
-        AnimatedVisibility(visibleState = state) {
-            GlideImage(
-                model = img,
-                contentDescription = "",
-                modifier = Modifier
-                    .height(200.dp)
-                    .animateEnterExit(
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    )
-            )
-        }
-
-    }
-
-
-}
-
-@Composable
-fun CreateNameText(nameStr: String){
-    var resizedFont by remember {
-        mutableStateOf(50.sp)
-    }
-
-    Text(
-        text = nameStr,
-        color = Color.White,
-        fontSize = resizedFont,
-        modifier = Modifier.layoutId("drinkName"),
-        fontFamily = drinkNameFont,
-        softWrap = false,
-        onTextLayout = { result ->
-            if(result.didOverflowWidth) {
-                resizedFont *= 0.95
-            }
-        }
-    )
-    Spacer(modifier = Modifier.height(10.dp))
-}
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateRating() {
+private fun CreateRating() {
     //Text
     AnimatedVisibility(
         visible= stringRating.value != "" && !isRating.value,
@@ -312,7 +198,7 @@ fun CreateRating() {
 
 
 @Composable
-fun CreateRatingStars(
+private fun CreateRatingStars(
     maxRating: Int,
     currentRating: Int,
     onRatingChanged: (Int) -> Unit
@@ -372,15 +258,13 @@ private fun CreateRateButton() {
                         //set flags
                         isRating.value = !isRating.value
                         isDoneRating.value = !isDoneRating.value
-
                     }
                 }
             ) {
-
                 if(isRating.value){
                     Text(text = "Save Rating")
                 }
-                else if (DrinkersInfo.userFavList.find { DisplayDrink.drinkId.value == it.idDrink }
+                else if (DrinkersInfo.userFavDrinkList.find { DisplayDrink.drinkId.value == it.idDrink }
                         ?.hasRating() == true)
                     Text(text = "Edit Rating")
                 else
@@ -388,46 +272,8 @@ private fun CreateRateButton() {
             }
             Divider(color = Color.Transparent, thickness = 1.dp, modifier = Modifier
                 .background(borderGradient))
-
         }
-
     }
-
-
-}
-
-
-
-@Composable
-fun CreateIngredientText(ingStr: String) {
-    Text(
-        text = ingStr,
-        color = Color.White,
-        fontSize = 20.sp,
-        modifier = Modifier
-            .layoutId("ingredients")
-            .padding(4.dp)
-    )
-}
-
-@Composable
-fun CreateInstructionText(instrStr: String){
-    Spacer(modifier = Modifier.height(30.dp))
-
-    Text(
-        text = "Directions:",
-        textDecoration = TextDecoration.Underline,
-        color = Color.Red,
-        fontSize = 20.sp
-    )
-
-    Text(
-        text = instrStr,
-        color = Color.White,
-        fontSize = 24.sp,
-        modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp ),
-        fontFamily = topBarFont
-    )
 }
 
 private fun resetFlags() {
@@ -435,6 +281,3 @@ private fun resetFlags() {
     intRating.value = 0
     isRating.value = false
 }
-
-@Composable
-fun CreateBottomSpace(){ Spacer(modifier = Modifier.height(50.dp)) }

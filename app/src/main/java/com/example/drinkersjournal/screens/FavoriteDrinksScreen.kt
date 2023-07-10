@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.drinkersjournal.DrinkersInfo
+import com.example.drinkersjournal.util.DrinkersInfo
 import com.example.drinkersjournal.data.DisplayDrink
 import com.example.drinkersjournal.ui.theme.drinkNameFont
 import com.example.drinkersjournal.ui.theme.drinkRatingTextFont
-import com.example.drinkersjournal.util.Screen
+import com.example.drinkersjournal.data.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteDrinksScreen(navController: NavController){
-    val listSize by remember { mutableStateOf(DrinkersInfo.userFavList.size) }
+    val listSize by remember { mutableStateOf(DrinkersInfo.userFavDrinkList.size) }
     Scaffold(
         topBar = { CreateTopBar(text = "Favorites", navController = navController) },
         bottomBar = { CreateBottomNavBar(navController) },
@@ -49,7 +49,7 @@ fun FavoriteDrinksScreen(navController: NavController){
                         bottom = paddingValues.calculateBottomPadding(),
                     )
                 ) {
-                    itemsIndexed(DrinkersInfo.userFavList) { _: Int, drink: Drink ->
+                    itemsIndexed(DrinkersInfo.userFavDrinkList) { _: Int, drink: Drink ->
                         Surface(
                             modifier = Modifier.padding(top = 5.dp, start = 8.dp, end = 8.dp)
                         ) {
@@ -71,7 +71,7 @@ fun FavoriteDrinksScreen(navController: NavController){
             }
         }
 
-
+/*
         ,
         floatingActionButton = {
             FloatingActionButton(
@@ -87,12 +87,14 @@ fun FavoriteDrinksScreen(navController: NavController){
             }
         },
 
+ */
+
     )
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CreateListEntry(drink: Drink) {
+private fun CreateListEntry(drink: Drink) {
     GlideImage(
         model = drink.strDrinkThumb.toString(),
         contentDescription = "Drink image",
@@ -176,7 +178,7 @@ fun CreateListEntry(drink: Drink) {
 }
 
 @Composable
-fun CreateEmptyListText() {
+private fun CreateEmptyListText() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

@@ -1,4 +1,4 @@
-package com.example.drinkersjournal.util
+package com.example.drinkersjournal.data
 
 sealed class Screen(val route: String) {
     object HomeScreen : Screen("home_screen")

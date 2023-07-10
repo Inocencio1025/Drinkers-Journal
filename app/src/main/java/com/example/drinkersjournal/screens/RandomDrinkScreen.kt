@@ -1,6 +1,5 @@
 package com.example.drinkersjournal.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -19,6 +18,7 @@ import androidx.navigation.NavController
 import com.example.drinkersjournal.*
 import com.example.drinkersjournal.data.DisplayDrink
 import com.example.drinkersjournal.ui.theme.topBarFont
+import com.example.drinkersjournal.util.DrinkersInfo
 import kotlinx.coroutines.launch
 
 
@@ -29,9 +29,9 @@ private val isInList = mutableStateOf(false)
 @Composable
 fun RandomDrinkScreen (navController: NavController) {
 
+    isInList.value = false
     LaunchedEffect(Unit){
-        val inList = DrinkersInfo.getInfoRandomDrink()
-        isInList.value = inList
+        isInList.value = DrinkersInfo.getInfoRandomDrink()
     }
 
     Scaffold(
@@ -85,7 +85,6 @@ fun RandomDrinkScreen (navController: NavController) {
 
                 // display instructions
                 CreateInstructionText(instrStr = DisplayDrink.instructions.value)
-                CreateBottomSpace()
             }
         }
     )

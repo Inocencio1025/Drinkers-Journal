@@ -1,6 +1,5 @@
-package com.example.drinkersjournal.util
+package com.example.drinkersjournal.datastore
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import com.example.drinkersjournal.ListOfDrinks
 import com.example.drinkersjournal.ProtoDrink
@@ -8,15 +7,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import okio.IOException
 
-
 class FavDrinksDataStore private constructor(private val FavDrinksStore: DataStore<ListOfDrinks>) {
-
-    private val TAG: String = "FavDrinksDataStore"
 
     val favDrinksFlow: Flow<ListOfDrinks> = FavDrinksStore.data.catch { exception ->
         // dataStore.data throws an IOException when an error is encountered when reading data
         if (exception is IOException) {
-            Log.e(TAG, "Error reading sort order preferences.", exception)
             emit(ListOfDrinks.getDefaultInstance())
         } else {
             throw exception
@@ -35,10 +30,7 @@ class FavDrinksDataStore private constructor(private val FavDrinksStore: DataSto
                     .addProtoDrink(newProtoDrink)
                     .build()
             }
-
         }
-        Log.e("LOOK", newProtoDrink.id + " -------- " + newProtoDrink.ratingNum)
-
     }
 
     suspend fun clearListOfDrinks() {
