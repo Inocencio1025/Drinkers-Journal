@@ -8,21 +8,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import com.inocencio.drinkersjournal.datastore.FavDrinkSerializer
 import com.inocencio.drinkersjournal.datastore.FavDrinksDataStore
 import com.inocencio.drinkersjournal.screens.setBrowseList
 import com.inocencio.drinkersjournal.ui.theme.DrinkersJournalTheme
 import com.inocencio.drinkersjournal.util.DrinkersInfo
 import com.inocencio.drinkersjournal.util.Navigation
-
+import com.inocencio.drinkersjournal.ListOfDrinks
+import com.inocencio.drinkersjournal.datastore.FavDrinkSerializer
 
 class MainActivity : ComponentActivity() {
 
     // Instantiate datastore (for loading/saving at app start)
-    private val Context.myFavDrinksDataStore: DataStore<com.inocencio.drinkersjournal.ListOfDrinks> by dataStore(
-        fileName = "favList.pb",
-        serializer = FavDrinkSerializer,
-    )
+    private val Context.myFavDrinksDataStore: DataStore<ListOfDrinks> by dataStore(
+    fileName = "favList.pb",
+    serializer = FavDrinkSerializer)
+
     private val favDrinksDataStore: FavDrinksDataStore
         get() = FavDrinksDataStore.getInstance(myFavDrinksDataStore)
 
@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         window.statusBarColor = Color.Black.hashCode()
         super.onCreate(savedInstanceState)
-        setContent {
+        this.setContent {
             DrinkersJournalTheme {
                 // loads in favorites list
                 setBrowseList()
