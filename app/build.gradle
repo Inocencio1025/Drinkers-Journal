@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.drinkersjournal'
+    namespace 'com.inocencio.drinkersjournal'
     compileSdk 33
 
     defaultConfig {
